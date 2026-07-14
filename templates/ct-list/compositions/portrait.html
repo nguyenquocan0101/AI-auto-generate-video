@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>CT List · Portrait 9:16</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  /*
+   * ct-list — ChuyenTin branded list frame. Portrait 9:16 (1080×1920).
+   */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; }
+  #root {
+    position: relative; width: 1080px; height: 1920px;
+    background: #ffffff; color: #1a1440;
+    font-family: 'Be Vietnam Pro', system-ui, sans-serif; overflow: hidden;
+  }
+
+  .bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #f0edf8 0%, #ffffff 50%, #f0edf8 100%);
+    background-size: 200% 200%;
+    animation: bgShift 12s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+  @keyframes bgShift {
+    from { background-position: 0% 30%; }
+    to { background-position: 100% 70%; }
+  }
+
+  #root::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(10, 5, 20, 0.15) 100%);
+    z-index: 99; pointer-events: none;
+  }
+
+  #root {
+    animation: pushIn 5s linear forwards;
+  }
+  @keyframes pushIn {
+    from { transform: scale(1); }
+    to { transform: scale(1.03); }
+  }
+  .glow {
+    position: absolute;
+    width: 900px; height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 190, 43, 0.08) 0%, transparent 65%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%);
+    z-index: 1;
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.8; transform: translate(-50%, -55%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -55%) scale(1.05); }
+  }
+  .grid {
+    position: absolute; inset: 0; z-index: 1; opacity: 0.3;
+    background-image:
+      linear-gradient(rgba(155, 77, 232, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(155, 77, 232, 0.05) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
+  /* top accent bar */
+  .accent-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(to right, #7726B6, #F5BE2B, transparent);
+    z-index: 10;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: barIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+  }
+  @keyframes barIn { to { transform: scaleX(1); } }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: translateY(0); } }
+
+  .head { position: absolute; left: 70px; right: 70px; top: 280px; z-index: 4; text-align: center; }
+  .title {
+    font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 84px; line-height: 1.1; letter-spacing: -2px;
+    opacity: 0; animation: fadeDown 0.8s cubic-bezier(0.16,1,0.3,1) 0.15s both;
+  }
+  .title .accent {
+    color: #F5BE2B;
+  }
+  .subtitle {
+    margin-top: 18px; font-size: 32px; font-weight: 500; color: rgba(26, 20, 48, 0.6);
+    opacity: 0; animation: fadeDown 0.8s ease-out 0.4s both;
+  }
+
+  .list { position: absolute; left: 70px; right: 70px; top: 620px; z-index: 4; display: flex; flex-direction: column; gap: 22px; }
+  .item {
+    position: relative; display: flex; align-items: center; gap: 28px; padding: 26px 36px;
+    border-radius: 20px; background: #ffffff; border: 1px solid rgba(155, 77, 232, 0.12);
+    box-shadow: 0 0 24px rgba(155, 77, 232, 0.12);
+    opacity: 0; transform: translateY(26px); animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    --c: #F5BE2B; --cbg: rgba(245, 190, 43, 0.12); --cbd: rgba(245, 190, 43, 0.35);
+  }
+  .item::before {
+    content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 6px;
+    border-radius: 0 6px 6px 0; background: var(--c); box-shadow: 0 0 20px var(--c); opacity: 0.9;
+  }
+  .item.lv-danger { --c: #DF2225; --cbg: rgba(223, 34, 37, 0.15); --cbd: rgba(223, 34, 37, 0.45); }
+  .item.lv-warn   { --c: #F5BE2B; --cbg: rgba(245, 190, 43, 0.15); --cbd: rgba(245, 190, 43, 0.45); }
+  .item.lv-good   { --c: #7726B6; --cbg: rgba(119, 38, 182, 0.15); --cbd: rgba(119, 38, 182, 0.45); }
+  .item.lv-info   { --c: #9B4DE8; --cbg: rgba(155, 77, 232, 0.15); --cbd: rgba(155, 77, 232, 0.45); }
+
+  .chip {
+    flex: 0 0 auto; width: 84px; height: 84px; border-radius: 18px; display: flex; align-items: center; justify-content: center;
+    font-size: 40px; background: var(--cbg); border: 1px solid var(--cbd);
+  }
+  .body { flex: 1 1 auto; min-width: 0; }
+  .it-title { font-weight: 700; font-size: 34px; line-height: 1.15; color: #1a1440; }
+  .it-desc { margin-top: 6px; font-size: 22px; font-weight: 500; color: rgba(26, 20, 48, 0.5); line-height: 1.3; }
+  .tag {
+    flex: 0 0 auto; margin-left: 20px; font-weight: 800; font-size: 34px; letter-spacing: 1px; color: var(--c);
+    text-shadow: 0 0 20px var(--cbd);
+  }
+
+  /* ChuyenTin dark preview palette override */
+  html, body { background: #05020a; }
+  #root { background: #191127 !important; color: #FFFFFF !important; }
+  .bg { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; }
+  .grid { opacity: .2; background-image: linear-gradient(rgba(241,236,251,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,251,.07) 1px, transparent 1px); }
+  .subtitle, .it-desc { color: rgba(255,255,255,.76) !important; }
+  .it-title { color: #FFFFFF !important; }
+  .item { background: rgba(25,17,39,.62) !important; border-color: rgba(241,236,251,.18) !important; box-shadow: 0 18px 38px rgba(0,0,0,.24); }
+  .item.lv-good { --c: #F5BE2B; --cbg: rgba(245,190,43,.16); --cbd: rgba(245,190,43,.42); }
+  .item.lv-info { --c: #9B4DE8; --cbg: rgba(155,77,232,.18); --cbd: rgba(155,77,232,.42); }
+</style>
+</head>
+<body>
+  <div
+    id="root"
+    data-composition-id="main"
+    data-start="0"
+    data-duration="5"
+    data-width="1080"
+    data-height="1920"
+  >
+    <div class="bg"></div>
+    <div class="glow"></div>
+    <div class="grid"></div>
+    <div class="accent-top"></div>
+
+    <div class="head">
+      <h1 class="title"></h1>
+      <div class="subtitle"></div>
+    </div>
+
+    <div class="list"></div>
+  </div>
+
+  <script>
+    (function () {
+      var v = (window.__hyperframes && typeof window.__hyperframes.getVariables === "function")
+        ? window.__hyperframes.getVariables() : {};
+      var titleEl = document.querySelector(".title");
+      var title = v.title != null ? String(v.title) : "";
+      var accent = v.accent != null ? String(v.accent) : "";
+      if (titleEl) {
+        titleEl.textContent = "";
+        titleEl.appendChild(document.createTextNode(title));
+        if (accent) {
+          var s = document.createElement("span");
+          s.className = "accent";
+          s.textContent = accent;
+          if (v.accent_from && v.accent_to) {
+            s.style.backgroundImage =
+              "linear-gradient(92deg, " + v.accent_from + " 0%, " + v.accent_to + " 100%)";
+          }
+          titleEl.appendChild(s);
+        }
+      }
+      var sub = document.querySelector(".subtitle");
+      if (sub && v.subtitle != null) sub.textContent = String(v.subtitle);
+
+      // Items
+      var levels = { danger: 1, warn: 1, good: 1, info: 1 };
+      var list = document.querySelector(".list");
+      var items = Array.isArray(v.items) ? v.items : [];
+      items.slice(0, 5).forEach(function (it, i) {
+        it = it || {};
+        var lvl = it.level && levels[it.level] ? it.level : "warn";
+        var card = document.createElement("div");
+        card.className = "item lv-" + lvl;
+        var eD = (0.5 + i * 0.12).toFixed(2);
+        card.style.animation = "fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) " + eD + "s both";
+
+        var chip = document.createElement("div");
+        chip.className = "chip";
+        chip.textContent = it.icon != null ? String(it.icon) : "";
+
+        var body = document.createElement("div");
+        body.className = "body";
+        var t = document.createElement("div");
+        t.className = "it-title";
+        t.textContent = it.title != null ? String(it.title) : "";
+        var d = document.createElement("div");
+        d.className = "it-desc";
+        d.textContent = it.desc != null ? String(it.desc) : "";
+        body.appendChild(t);
+        body.appendChild(d);
+
+        var tag = document.createElement("div");
+        tag.className = "tag";
+        tag.textContent = it.tag != null ? String(it.tag) : "";
+
+        card.appendChild(chip);
+        card.appendChild(body);
+        card.appendChild(tag);
+        list.appendChild(card);
+      });
+    })();
+    window.__timelines = window.__timelines || {};
+    window.__timelines["main"] = { pause: function () {}, seek: function () {}, paused: function () { return true; } };
+  </script>
+</body>
+</html>

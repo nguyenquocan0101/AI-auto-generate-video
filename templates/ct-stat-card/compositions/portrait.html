@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>CT Stat Card · Portrait 9:16</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  /*
+   * ct-stat-card — ChuyenTin branded body / stat frame. Portrait 9:16 (1080×1920).
+   */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; }
+  #root {
+    position: relative;
+    width: 1080px; height: 1920px;
+    overflow: hidden;
+    background: #ffffff;
+    color: #1a1440;
+    font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  }
+
+  .bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #f0edf8 0%, #ffffff 50%, #f0edf8 100%);
+    background-size: 200% 200%;
+    animation: bgShift 12s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+  @keyframes bgShift {
+    from { background-position: 0% 30%; }
+    to { background-position: 100% 70%; }
+  }
+
+  #root::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(10, 5, 20, 0.15) 100%);
+    z-index: 99; pointer-events: none;
+  }
+
+  #root {
+    animation: pushIn 5s linear forwards;
+  }
+  @keyframes pushIn {
+    from { transform: scale(1); }
+    to { transform: scale(1.03); }
+  }
+
+  /* ── Ambient glow ── */
+  .glow {
+    position: absolute;
+    width: 900px; height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 190, 43, 0.14) 0%, transparent 65%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%);
+    z-index: 1;
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.8; transform: translate(-50%, -55%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -55%) scale(1.06); }
+  }
+
+  /* ── Top accent bar ── */
+  .accent-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(to right, #7726B6, #F5BE2B, transparent);
+    z-index: 10;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: barIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+  }
+  @keyframes barIn { to { transform: scaleX(1); } }
+
+  /* ── Oversized anchor number (faint) ── */
+  .anchor {
+    position: absolute;
+    bottom: 140px;
+    right: -20px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 900;
+    font-size: 480px;
+    line-height: 1;
+    color: rgba(155, 77, 232, 0.07);
+    z-index: 2;
+    user-select: none;
+    opacity: 0;
+    animation: fade 0.5s ease-out 0.3s forwards;
+  }
+
+  /* ── Main layout ── */
+  .layout {
+    position: absolute;
+    inset: 0;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 80px;
+    z-index: 10;
+  }
+
+  /* label / eyebrow */
+  .label {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #9B4DE8;
+    opacity: 0;
+    animation: fadeUp 0.5s ease-out 0.3s forwards;
+    margin-bottom: 24px;
+  }
+
+  /* hero stat number */
+  .headline {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 900;
+    font-size: 280px;
+    line-height: 0.95;
+    color: #F5BE2B;
+    text-shadow:
+      0 0 80px rgba(245, 190, 43, 0.55),
+      0 0 160px rgba(245, 190, 43, 0.2);
+    opacity: 0;
+    transform: translateY(60px);
+    animation: fadeUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;
+    margin-bottom: 40px;
+  }
+
+  /* divider rule */
+  .rule {
+    height: 3px;
+    width: 0;
+    background: linear-gradient(to right, transparent, #F5BE2B, #7726B6, transparent);
+    animation: ruleGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.95s forwards;
+    margin-bottom: 40px;
+  }
+  @keyframes ruleGrow { to { width: 600px; } }
+
+  /* subtitle */
+  .subtitle {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.55;
+    color: rgba(26, 20, 48, 0.7);
+    max-width: 860px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease-out 1.15s forwards;
+  }
+
+  /* ── Footer bar ── */
+  .footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 100px;
+    background: rgba(42, 16, 69, 0.9);
+    border-top: 1px solid rgba(155, 77, 232, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    z-index: 10;
+    opacity: 0;
+    animation: fade 0.5s ease-out 1.4s forwards;
+  }
+  .footer-left {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(26, 20, 48, 0.5);
+  }
+  .footer-right {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: #9B4DE8;
+    letter-spacing: 1px;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade { to { opacity: 1; } }
+
+  /* ChuyenTin dark preview palette override */
+  html, body { background: #05020a; }
+  #root { background: #191127 !important; color: #FFFFFF !important; }
+  .bg { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; }
+  .label, .footer-right { color: #F5BE2B !important; }
+  .subtitle, .footer-left { color: rgba(255,255,255,.78) !important; }
+  .anchor { color: rgba(155,77,232,.14) !important; }
+  .footer { background: rgba(25,17,39,.72) !important; border-top-color: rgba(241,236,251,.18) !important; }
+</style>
+</head>
+<body>
+  <div
+    id="root"
+    data-composition-id="main"
+    data-start="0"
+    data-duration="5"
+    data-width="1080"
+    data-height="1920"
+    data-composition-variables='{"label":"Thống kê · 2026","headline":"82%","subtitle":"Học sinh đạt điểm cao hơn nhờ luyện tập có hệ thống","anchor":"82","footer_left":"ChuyenTin","footer_right":"chuyentin.com"}'
+  >
+    <div class="bg"></div>
+    <div class="glow"></div>
+    <div class="anchor"></div>
+    <div class="accent-top"></div>
+
+    <div class="layout">
+      <div class="label"></div>
+      <div class="headline"></div>
+      <div class="rule"></div>
+      <div class="subtitle"></div>
+    </div>
+
+    <div class="footer">
+      <span class="footer-left"></span>
+      <span class="footer-right"></span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var v = (window.__hyperframes && typeof window.__hyperframes.getVariables === "function")
+        ? window.__hyperframes.getVariables() : {};
+      var set = function (sel, text) {
+        var el = document.querySelector(sel);
+        if (el && text != null) el.textContent = String(text);
+      };
+      set(".label", v.label);
+      set(".headline", v.headline);
+      set(".subtitle", v.subtitle);
+      set(".anchor", v.anchor);
+      set(".footer-left", v.footer_left);
+      set(".footer-right", v.footer_right);
+    })();
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines["main"] = { pause: function(){}, seek: function(){}, paused: function(){ return true; } };
+  </script>
+</body>
+</html>

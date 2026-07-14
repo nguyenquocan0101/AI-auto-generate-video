@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>CT Glitch Title · 16:9</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700;900&family=Space+Mono:wght@400;700&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  /*
+   * ct-glitch-title — ChuyenTin branded cyberpunk RGB-split glitch title. 16:9 landscape.
+   */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #ffffff; }
+  #root {
+    position: relative; width: 1920px; height: 1080px; background: #ffffff; color: #1a1440;
+    font-family: 'Quicksand', sans-serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .mono { font-family: 'Space Mono', monospace; }
+
+  /* scanlines */
+  #root::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 3;
+    background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode: multiply; opacity: 0.03;
+  }
+  /* grid */
+  #root::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+    background-image:
+      linear-gradient(rgba(155, 77, 232, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(155, 77, 232, 0.05) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+  .vignette {
+    position: absolute; inset: 0; z-index: 5; pointer-events: none;
+    background: radial-gradient(circle at center, transparent 70%, rgba(25, 17, 39, 0.06) 100%);
+  }
+
+  @keyframes glitch {
+    0%, 92%, 100% { transform: translate(0,0); filter: none; }
+    93% { transform: translate(-6px, 1px); filter: url(#rgb); }
+    94% { transform: translate(8px, -2px); filter: url(#rgb); }
+    95% { transform: translate(-4px, 2px); }
+    96% { transform: translate(4px, -1px); filter: url(#rgb); }
+    97% { transform: translate(0,0); }
+  }
+  .glitch-host { position: relative; display: inline-block; z-index: 6; animation: glitch 4s infinite; }
+  .glitch-text { font-family: 'Quicksand', sans-serif; font-weight: 900; letter-spacing: -2px; line-height: 0.92; font-size: 168px;
+    text-align: center; text-transform: uppercase; }
+  .layer { position: absolute; inset: 0; mix-blend-mode: multiply; }
+  .layer-p { color: #9B4DE8; transform: translate(-3px, 1px); }
+  .layer-g { color: #F5BE2B; transform: translate(3px, -1px); }
+
+  .overline { z-index: 6; font-size: 26px; opacity: 0.6; letter-spacing: 6px; text-transform: uppercase;
+    margin-bottom: 40px; }
+  .subtitle { z-index: 6; margin-top: 48px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 30px; opacity: 0.78; letter-spacing: 2px;
+    text-align: center; max-width: 880px; line-height: 1.5; }
+
+  .chrome { position: absolute; z-index: 6; font-size: 22px; letter-spacing: 4px; opacity: 0.6; }
+  .chrome.tl { top: 80px; left: 70px; }
+  .chrome.tr { top: 80px; right: 70px; color: #F5BE2B; }
+  .chrome.bl { bottom: 80px; left: 70px; opacity: 0.06; }
+  .chrome.br { bottom: 80px; right: 70px; opacity: 0.06; color: #9B4DE8; }
+  .ascii { position: absolute; z-index: 6; font-size: 20px; opacity: 0.035; line-height: 1; letter-spacing: 2px; white-space: pre; }
+  .ascii.a1 { top: 200px; left: 70px; }
+  .ascii.a2 { bottom: 200px; right: 70px; text-align: right; }
+  /* ChuyenTin dark preview palette override */
+  html, body { background: #05020a; }
+  #root { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; color: #FFFFFF !important; }
+  #root::before { background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.18) 0px, rgba(255,255,255,.18) 1px, transparent 1px, transparent 3px); mix-blend-mode: screen; opacity: .06; }
+  #root::after { background-image: linear-gradient(rgba(241,236,251,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,251,.07) 1px, transparent 1px); }
+  .glitch-text.base { color: #FFFFFF; }
+  .overline, .subtitle, .chrome { color: rgba(255,255,255,.74); }
+  .chrome.tr, .layer-g { color: #F5BE2B !important; }
+  .layer-p, .chrome.br { color: #9B4DE8 !important; }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <filter id="rgb">
+          <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+          <feOffset in="SourceGraphic" dx="3" dy="0" result="r"/>
+          <feOffset in="SourceGraphic" dx="-3" dy="0" result="b"/>
+          <feMerge><feMergeNode in="r"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+    </svg>
+
+    <div class="chrome tl mono">&gt;&gt; CODE · EXPLORER</div>
+    <div class="chrome tr mono">RUN ●</div>
+    <pre class="ascii a1 mono">█▓▒░ █▓▒░
+▒▓█▓ ░▒▓
+░▒▓█ ▓▒░░</pre>
+    <pre class="ascii a2 mono">█▓▒░ ▓▒░█
+▒░░▓ ░▒▓█
+▓▒░░ █▓▒░</pre>
+
+    <div class="overline mono">— C++ Code Source —</div>
+    <div class="glitch-host">
+      <h1 class="glitch-text base"></h1>
+      <h1 class="glitch-text layer layer-p"></h1>
+      <h1 class="glitch-text layer layer-g"></h1>
+    </div>
+    <div class="subtitle"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <script>
+    (function () {
+      var v = (window.__hyperframes && typeof window.__hyperframes.getVariables === "function")
+        ? window.__hyperframes.getVariables() : {};
+      
+      var set = function (sel, text) {
+        var el = document.querySelectorAll(sel);
+        if (el) {
+          for (var i = 0; i < el.length; i++) el[i].textContent = String(text);
+        }
+      };
+
+      set(".glitch-text", v.title != null ? v.title : "");
+      set(".subtitle", v.subtitle != null ? v.subtitle : "");
+    })();
+    window.__timelines = window.__timelines || {};
+    window.__timelines["main"] = { pause: function(){}, seek: function(){}, paused: function(){ return true; } };
+  </script>
+</body>
+</html>

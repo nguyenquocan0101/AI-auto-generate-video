@@ -14,16 +14,25 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export class OmniVoiceClient implements TtsClient {
   constructor(private cfg: OmniVoiceOpts) {}
 
-  async generate(text: string, audioOutPath: string, _srtOutPath?: string): Promise<void> {
+  async generate(
+    text: string,
+    audioOutPath: string,
+    _srtOutPath?: string,
+    opts?: { speed?: number; instruct?: string; voice?: string }
+  ): Promise<void> {
     const delays = [1000, 2000, 4000];
     let lastErr: unknown;
 
     for (let attempt = 0; attempt < 4; attempt++) {
       try {
+        const body: Record<string, any> = { text };
+        if (opts?.speed !== undefined) body.speed = opts.speed;
+        if (opts?.instruct !== undefined) body.instruct = opts.instruct;
+
         const resp = await axios.post<ArrayBuffer>(
           `${this.cfg.endpoint}/tts`,
-          { text },
-          { headers: { "Content-Type": "application/json", Accept: "audio/mpeg" }, responseType: "arraybuffer", timeout: 60000 },
+          body,
+          { headers: { "Content-Type": "application/json", Accept: "audio/mpeg" }, responseType: "arraybuffer", timeout: 300000 },
         );
         await writeFile(audioOutPath, Buffer.from(resp.data));
         return;

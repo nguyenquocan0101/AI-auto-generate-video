@@ -1,0 +1,45 @@
+Title: Sắp xếp bằng Cây Nhị Phân (Tree Sort)
+Concept: Tree Sort
+Prerequisites: Cấu trúc dữ liệu cây nhị phân, Cây tìm kiếm nhị phân (BST), Duyệt cây theo thứ tự Inorder.
+Language: C++
+Domain: Sorting & Data Structures
+
+Code Snippet:
+```cpp
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+};
+
+Node* insert(Node* root, int x) {
+    if (root == nullptr) {
+        return new Node{x, nullptr, nullptr};
+    }
+    if (x < root->data) {
+        root->left = insert(root->left, x);
+    } else {
+        root->right = insert(root->right, x);
+    }
+    return root;
+}
+
+void inorder(Node* root) {
+    if (root != nullptr) {
+        inorder(root->left);
+        cout << root->data << " ";
+        inorder(root->right);
+    }
+}
+```
+
+Trace Input: [7, 4, 9, 1, 6, 8, 10]
+Time Complexity: O(n log n) trung bình khi cây cân bằng, O(n^2) trường hợp xấu nhất khi cây bị lệch.
+Space Complexity: O(n)
+Common Mistakes:
+1. Không giải phóng bộ nhớ của các Node sau khi sắp xếp xong (Memory leak).
+2. Khi chèn phần tử trùng lặp, nếu không xử lý đúng quy tắc sẽ làm mất phần tử hoặc lặp vô hạn (ở đây quy tắc là lớn hơn hoặc bằng sẽ đi sang phải).
+3. Đệ quy quá sâu trên cây bị lệch có thể gây Stack Overflow.
+
+Real World Use:
+Dùng khi dữ liệu được nhận liên tục (streaming data) và cần duy trì trạng thái đã sắp xếp mọi lúc để truy vấn nhanh.

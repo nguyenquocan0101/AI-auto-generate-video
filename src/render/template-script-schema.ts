@@ -17,6 +17,8 @@ export type TplSfxSpecType = z.infer<typeof SfxSpec>;
 const TemplateScene = z.object({
   id: z.string().min(1),
   type: z.enum(["hook", "body", "outro"]),
+  /** Optional per-scene TTS provider when voice.provider is "mixed". */
+  ttsProvider: z.enum(["omnivoice", "vieneu"]).optional(),
   /** Spoken narration (Vietnamese, spelled-out numbers — see skill rules). */
   voiceText: z.string().min(1),
   /** Folder name under templates/, e.g. "frame-bold-poster". */
@@ -25,7 +27,7 @@ const TemplateScene = z.object({
   inputs: z.record(z.string(), z.unknown()).default({}),
   /** Optional SFX override (else picked per scene.type + voiceText keywords). */
   sfx: SfxSpec.optional(),
-});
+}).passthrough();
 export type TemplateSceneType = z.infer<typeof TemplateScene>;
 
 export const TemplateScriptSchema = z.object({
@@ -40,17 +42,20 @@ export const TemplateScriptSchema = z.object({
       image: z.string().url().nullable(),
     }),
     channel: z.string().min(1),
+    audience: z.enum(["cap2", "cap3", "chung"]).optional(),
   }),
   voice: z.object({
-    provider: z.literal("omnivoice").default("omnivoice"),
+    provider: z.enum(["omnivoice", "vieneu", "mixed"]).default("omnivoice"),
     speed: z.number().min(0.5).max(2.0),
+    instruct: z.string().optional(),
+    vieneuVoice: z.string().min(1).optional(),
   }),
   /** Output aspect for every scene (templates render a matching composition). */
   aspect: z.enum(["9:16", "16:9", "1:1"]).default("9:16"),
   scenes: z
     .array(TemplateScene)
     .min(3)
-    .max(12)
+    .max(24)
     .refine((s) => s[0]?.type === "hook", { message: "scenes[0] must be type=hook" })
     .refine((s) => s[s.length - 1]?.type === "outro", { message: "last scene must be type=outro" }),
 });

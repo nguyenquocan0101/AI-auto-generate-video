@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>CT Hook Hero · 16:9</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700;900&family=Be+Vietnam+Pro:wght@500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  /*
+   * ct-hook-hero — ChuyenTin branded hook / hero frame. 16:9 landscape.
+   * Palette: Deep Navy #ffffff · Brand Purple #7726B6 · Medium Purple #9B4DE8
+   *          Golden Yellow #F5BE2B · White #FFFFFF
+   * Fonts: Quicksand 900 (headlines) · Be Vietnam Pro 600/700 (body/UI)
+   * HyperFrames 0.6 composition — content via data-composition-variables.
+   */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; }
+  #root {
+    position: relative;
+    width: 1920px; height: 1080px;
+    overflow: hidden;
+    background: #ffffff;
+    color: #1a1440;
+    font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  }
+
+  /* ── Background gradient ── */
+  .bg-gradient {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, #f0edf8 0%, #ffffff 60%);
+    background-size: 200% 200%;
+    animation: bgShift 12s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+  @keyframes bgShift {
+    from { background-position: 0% 30%; }
+    to { background-position: 100% 70%; }
+  }
+
+  /* ── Vignette overlay ── */
+  #root::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(10, 5, 20, 0.18) 100%);
+    z-index: 99; pointer-events: none;
+  }
+
+  /* ── Camera push-in ── */
+  #root {
+    animation: pushIn 5s linear forwards;
+  }
+  @keyframes pushIn {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+  }
+
+  /* ── Floating blobs — purple & gold glow ── */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    mix-blend-mode: multiply;
+    filter: blur(90px);
+    will-change: transform;
+    z-index: 1;
+    opacity: 0.06;
+  }
+  .b1 {
+    width: 700px; height: 700px;
+    background: #7726B6;
+    top: -200px; left: -150px;
+    animation: float1 9s ease-in-out infinite;
+  }
+  .b2 {
+    width: 500px; height: 500px;
+    background: #9B4DE8;
+    bottom: -100px; right: 200px;
+    animation: float2 12s ease-in-out infinite;
+  }
+  .b3 {
+    width: 400px; height: 400px;
+    background: #F5BE2B;
+    top: 100px; right: -100px;
+    opacity: 0.035;
+    animation: float3 10s ease-in-out infinite;
+  }
+  .b4 {
+    width: 300px; height: 300px;
+    background: #9B4DE8;
+    bottom: 100px; left: 300px;
+    opacity: 0.3;
+    animation: float1 14s ease-in-out infinite reverse;
+  }
+  @keyframes float1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(80px, -60px) scale(1.12); }
+  }
+  @keyframes float2 {
+    0%, 100% { transform: translate(0, 0) scale(1.05); }
+    50% { transform: translate(-100px, 50px) scale(0.92); }
+  }
+  @keyframes float3 {
+    0%, 100% { transform: translate(0, 0) scale(0.95); }
+    50% { transform: translate(50px, 80px) scale(1.15); }
+  }
+
+  /* ── Subtle grid overlay ── */
+  .grid-overlay {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(155, 77, 232, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(155, 77, 232, 0.06) 1px, transparent 1px);
+    background-size: 80px 80px;
+    z-index: 2;
+  }
+
+  /* ── Content layer ── */
+  .content {
+    position: absolute; inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 180px;
+    z-index: 10;
+  }
+
+  /* kicker pill */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(245, 190, 43, 0.15);
+    border: 1px solid rgba(245, 190, 43, 0.4);
+    border-radius: 100px;
+    padding: 10px 28px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #F5BE2B;
+    opacity: 0;
+    animation: fadeUp 0.5s ease-out 0.2s forwards;
+    margin-bottom: 36px;
+  }
+  .kicker::before {
+    content: '';
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #F5BE2B;
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* headline — kinetic word-by-word */
+  .headline {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 900;
+    font-size: 110px;
+    line-height: 1.05;
+    max-width: 1200px;
+    margin-bottom: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 18px;
+  }
+  .headline .hw {
+    display: inline-block;
+    color: #7726B6;
+    opacity: 0;
+    transform: translateY(30px) scale(0.92);
+    animation: wordIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes wordIn {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* subheadline */
+  .subheadline {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 1.5;
+    max-width: 900px;
+    color: rgba(26, 20, 48, 0.75);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s ease-out 0.75s forwards;
+    margin-bottom: 60px;
+  }
+
+  /* CTA pill */
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #F5BE2B;
+    color: #1a1440;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 900;
+    font-size: 26px;
+    padding: 20px 48px;
+    border-radius: 100px;
+    box-shadow: 0 8px 24px rgba(245, 190, 43, 0.35);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.05s forwards;
+  }
+  .cta::after {
+    content: '→';
+    font-size: 28px;
+  }
+
+  /* ── Brand badge top-right ── */
+  .brand {
+    position: absolute;
+    top: 60px; right: 90px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(26, 20, 48, 0.45);
+    z-index: 10;
+    opacity: 0;
+    animation: fade 0.5s ease-out 1.3s forwards;
+  }
+
+  /* ── Right accent bar ── */
+  .accent-bar {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: linear-gradient(to bottom, #F5BE2B, #7726B6, transparent);
+    z-index: 10;
+    transform: scaleY(0);
+    transform-origin: top;
+    animation: barIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  }
+  @keyframes barIn { to { transform: scaleY(1); } }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade { to { opacity: 1; } }
+  /* ChuyenTin dark preview palette override */
+  html, body { background: #05020a; }
+  #root { background: #191127 !important; color: #FFFFFF !important; }
+  .bg-gradient { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; }
+  .blob { mix-blend-mode: screen; opacity: .14; }
+  .grid-overlay { background-image: linear-gradient(rgba(241,236,251,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,251,.07) 1px, transparent 1px); }
+  .logo-badge .brand-name, .subheadline { color: rgba(255,255,255,.78) !important; }
+  .headline .hw { color: #FFFFFF !important; }
+  .kicker { color: #F5BE2B !important; background: rgba(245,190,43,.12); }
+</style>
+</head>
+<body>
+  <div
+    id="root"
+    data-composition-id="main"
+    data-start="0"
+    data-duration="5"
+    data-width="1920"
+    data-height="1080"
+    data-composition-variables='{"kicker":"🔥 Tin nóng","headline":"Tiêu đề lớn","subheadline":"Dòng phụ mô tả ngắn gọn","cta":"Theo dõi ngay","brand":"ChuyenTin"}'
+  >
+    <div class="bg-gradient"></div>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    <div class="grid-overlay"></div>
+    <div class="accent-bar"></div>
+
+    <div class="content">
+      <div class="kicker"></div>
+      <div class="headline"></div>
+      <div class="subheadline"></div>
+      <div class="cta"></div>
+    </div>
+
+    <div class="brand"></div>
+  </div>
+
+  <script>
+    (function () {
+      var v = (window.__hyperframes && typeof window.__hyperframes.getVariables === "function")
+        ? window.__hyperframes.getVariables() : {};
+      var set = function (sel, text) {
+        var el = document.querySelector(sel);
+        if (el && text != null) el.textContent = String(text);
+      };
+      set(".kicker", v.kicker);
+      set(".subheadline", v.subheadline);
+      set(".cta", v.cta);
+      set(".brand", v.brand);
+
+      // Kinetic headline — render word by word with stagger
+      var headEl = document.querySelector(".headline");
+      if (headEl && v.headline) {
+        headEl.innerHTML = '';
+        var words = String(v.headline).split(/\s+/);
+        words.forEach(function(w, i) {
+          var span = document.createElement('span');
+          span.className = 'hw';
+          span.textContent = w;
+          span.style.animationDelay = (0.45 + i * 0.1) + 's';
+          headEl.appendChild(span);
+        });
+      }
+
+      if (v.headline_color) {
+        var hwEls = document.querySelectorAll(".headline .hw");
+        hwEls.forEach(function(el) {
+          el.style.color = String(v.headline_color);
+        });
+      }
+    })();
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines["main"] = { pause: function(){}, seek: function(){}, paused: function(){ return true; } };
+  </script>
+</body>
+</html>

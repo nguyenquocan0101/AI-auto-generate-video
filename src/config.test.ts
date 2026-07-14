@@ -1,7 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { loadConfig } from "./config.js";
 
-const ENV_KEYS = ["TTS_PROVIDER", "OMNIVOICE_ENDPOINT", "TTS_CONCURRENCY"];
+const ENV_KEYS = [
+  "TTS_PROVIDER",
+  "OMNIVOICE_ENDPOINT",
+  "VIENEU_STREAM_ENDPOINT",
+  "VIENEU_VOICE",
+  "TTS_CONCURRENCY",
+];
 
 describe("loadConfig", () => {
   let saved: Record<string, string | undefined>;
@@ -22,6 +28,7 @@ describe("loadConfig", () => {
     const cfg = loadConfig();
     expect(cfg.ttsProvider).toBe("omnivoice");
     expect(cfg.omnivoiceEndpoint).toBe("http://127.0.0.1:8123");
+    expect(cfg.vieneuStreamEndpoint).toBe("http://127.0.0.1:8001");
     expect(cfg.ttsConcurrency).toBe(1);
   });
 
@@ -31,7 +38,23 @@ describe("loadConfig", () => {
     expect(cfg.omnivoiceEndpoint).toBe("http://localhost:9000");
   });
 
-  it("rejects any provider other than omnivoice", () => {
+  it("respects VieNeu config overrides", () => {
+    process.env.TTS_PROVIDER = "vieneu";
+    process.env.VIENEU_STREAM_ENDPOINT = "http://localhost:8002";
+    process.env.VIENEU_VOICE = "Phạm Tuyên";
+    const cfg = loadConfig();
+    expect(cfg.ttsProvider).toBe("vieneu");
+    expect(cfg.vieneuStreamEndpoint).toBe("http://localhost:8002");
+    expect(cfg.vieneuVoice).toBe("Phạm Tuyên");
+  });
+
+  it("accepts mixed provider", () => {
+    process.env.TTS_PROVIDER = "mixed";
+    const cfg = loadConfig();
+    expect(cfg.ttsProvider).toBe("mixed");
+  });
+
+  it("rejects unknown providers", () => {
     process.env.TTS_PROVIDER = "elevenlabs";
     expect(() => loadConfig()).toThrow(/TTS_PROVIDER/);
   });

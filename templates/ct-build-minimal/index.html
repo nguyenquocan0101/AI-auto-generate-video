@@ -1,0 +1,167 @@
+﻿<!doctype html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=1920, height=1080" />
+        <title>CT Build Minimal · 16:9</title>
+        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700;900&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        <style>
+            /*
+             * ct-build-minimal — ChuyenTin branded build minimal frame. 16:9 landscape.
+             */
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            html, body { width: 1920px; height: 1080px; overflow: hidden; background: #ffffff; }
+            #root {
+                position: relative; width: 1920px; height: 1080px;
+                background: #ffffff; color: #1a1440;
+                font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+            }
+
+            .wash {
+                position: absolute; inset: 0; z-index: 0;
+                background:
+                    radial-gradient(ellipse 1500px 1000px at 52% 46%, rgba(245, 190, 43, 0.12) 0%, transparent 66%),
+                    radial-gradient(ellipse 1000px 700px at 50% 44%, rgba(119, 38, 182, 0.2) 0%, transparent 60%);
+                opacity: 0; animation: washIn 1.4s ease-out forwards;
+            }
+            @keyframes washIn { to { opacity: 1; } }
+
+            .side-label {
+                position: absolute; font-weight: 500; font-size: 14px; letter-spacing: 6px;
+                text-transform: uppercase; color: rgba(26, 20, 48, 0.4); z-index: 2;
+                opacity: 0; animation: fade 1s ease-out 1.8s forwards;
+            }
+            .side-left {
+                left: 72px; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: center;
+            }
+            .side-right {
+                right: 72px; top: 50%; transform: translateY(-50%) rotate(90deg); transform-origin: center;
+            }
+            @keyframes fade { to { opacity: 1; } }
+
+            .center {
+                position: absolute; inset: 0; display: flex; flex-direction: column;
+                align-items: center; justify-content: center; margin-top: -40px;
+                z-index: 1; padding: 0 120px;
+            }
+            .eyebrow {
+                font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700; font-size: 18px;
+                letter-spacing: 9px; text-transform: uppercase; color: #F5BE2B;
+                text-shadow: 0 0 20px rgba(245, 190, 43, 0.45); margin-bottom: 40px;
+                opacity: 0; animation: fadeUp 0.9s ease-out 0.5s forwards; text-align: center;
+            }
+            .hero {
+                font-family: 'Quicksand', sans-serif; font-weight: 900; font-size: 240px;
+                letter-spacing: -3px; color: #1a1440; line-height: 0.96; text-align: center;
+                text-shadow: 0 0 80px rgba(119, 38, 182, 0.55), 0 4px 30px rgba(0, 0, 0, 0.4);
+            }
+            .hero .ch {
+                display: inline-block; opacity: 0; transform: translateY(30px) scale(0.9);
+                animation: charReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            @keyframes charReveal {
+                to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+
+            .desc {
+                margin-top: 40px; font-weight: 500; font-size: 28px; line-height: 1.5;
+                color: rgba(26, 20, 48, 0.7); max-width: 900px; text-align: center;
+                opacity: 0; animation: fadeUp 0.8s ease-out 1.5s forwards;
+            }
+            @keyframes fadeUp {
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            /* top and bottom hairlines */
+            .h-lines {
+                position: absolute; left: 160px; right: 160px; height: 1px; z-index: 2;
+            }
+            .h-lines-top { top: 160px; background: linear-gradient(to right, transparent, rgba(155, 77, 232, 0.3), transparent); }
+            .h-lines-bot {
+                bottom: 160px; height: 1px;
+                background: linear-gradient(to right, transparent, rgba(155, 77, 232, 0.3), transparent);
+                display: flex; align-items: center; justify-content: center; gap: 8px;
+            }
+            .ind {
+                width: 3px; background: rgba(155, 77, 232, 0.35); opacity: 0; transform: scaleY(0);
+                animation: lineIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            .ind.gold { background: #F5BE2B; }
+            @keyframes lineIn { to { opacity: 1; transform: scaleY(1); } }
+            /* ChuyenTin dark preview palette override */
+            html, body { background: #05020a; }
+            #root { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; color: #FFFFFF !important; }
+            .wash {
+                background:
+                    radial-gradient(ellipse 900px 960px at 54% 44%, rgba(245, 190, 43, 0.18) 0%, transparent 68%),
+                    radial-gradient(ellipse 700px 700px at 50% 42%, rgba(155, 77, 232, 0.26) 0%, transparent 62%) !important;
+            }
+            .side-label, .desc { color: rgba(255,255,255,.74) !important; }
+            .hero { color: #FFFFFF !important; text-shadow: 0 0 80px rgba(119,38,182,.55), 0 4px 30px rgba(0,0,0,.40); }
+            .h-lines-top, .h-lines-bot { background: linear-gradient(to right, transparent, rgba(245,190,43,.34), transparent) !important; }
+</style>
+    </head>
+    <body>
+        <div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+            <div class="wash"></div>
+            <div class="side-label side-left"></div>
+            <div class="side-label side-right"></div>
+
+            <div class="h-lines h-lines-top"></div>
+            <div class="center">
+                <div class="eyebrow"></div>
+                <h1 id="hero" class="hero"></h1>
+                <p class="desc"></p>
+            </div>
+
+            <div class="h-lines h-lines-bot">
+                <div class="ind" style="height: 30px; animation-delay: 2.1s"></div>
+                <div class="ind gold" style="height: 40px; animation-delay: 2.16s"></div>
+                <div class="ind" style="height: 26px; animation-delay: 2.22s"></div>
+                <div class="ind" style="height: 36px; animation-delay: 2.28s"></div>
+                <div class="ind gold" style="height: 46px; animation-delay: 2.34s"></div>
+                <div class="ind" style="height: 30px; animation-delay: 2.4s"></div>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                var v = (window.__hyperframes && typeof window.__hyperframes.getVariables === "function")
+                        ? window.__hyperframes.getVariables() : {};
+                var set = function (sel, text) {
+                    var el = document.querySelector(sel);
+                    if (el && text != null) el.textContent = String(text);
+                };
+                set(".eyebrow", v.eyebrow);
+                set(".desc", v.desc);
+                set(".side-left", v.side_left);
+                set(".side-right", v.side_right);
+                
+                var hero = document.getElementById("hero");
+                if (hero && v.hero != null) {
+                    hero.textContent = "";
+                    var chars = Array.from(String(v.hero));
+                    chars.forEach(function (c, i) {
+                        var span = document.createElement("span");
+                        span.className = "ch";
+                        span.textContent = c === " " ? " " : c;
+                        span.style.animationDelay = (0.6 + i * 0.06).toFixed(2) + "s";
+                        hero.appendChild(span);
+                    });
+
+                    /* Auto-scale hero */
+                    var maxPx = 240, minPx = 60;
+                    hero.style.whiteSpace = "nowrap";
+                    hero.style.fontSize = maxPx + "px";
+                    if (hero.scrollWidth > hero.offsetWidth) {
+                        var sized = Math.max(minPx, Math.floor(maxPx * hero.offsetWidth / hero.scrollWidth));
+                        hero.style.fontSize = sized + "px";
+                    }
+                    hero.style.whiteSpace = "";
+                }
+            })();
+            window.__timelines = window.__timelines || {};
+            window.__timelines["main"] = { pause: function () {}, seek: function () {}, paused: function () { return true; } };
+        </script>
+    </body>
+</html>

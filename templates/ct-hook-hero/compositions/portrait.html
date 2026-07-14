@@ -1,0 +1,343 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>CT Hook Hero · Portrait 9:16</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  /*
+   * ct-hook-hero — ChuyenTin branded hook / hero frame. Portrait 9:16 (1080×1920).
+   * Palette: Deep Navy #ffffff · Brand Purple #7726B6 · Medium Purple #9B4DE8
+   *          Golden Yellow #F5BE2B · White #FFFFFF
+   * Fonts: Be Vietnam Pro 900 (headlines) · Be Vietnam Pro 600/700 (body/UI)
+   */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; }
+  #root {
+    position: relative;
+    width: 1080px; height: 1920px;
+    overflow: hidden;
+    background: #ffffff;
+    color: #1a1440;
+    font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  }
+
+  /* ── Background gradient ── */
+  .bg-gradient {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, #f0edf8 0%, #ffffff 65%);
+    background-size: 200% 200%;
+    animation: bgShift 12s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+  @keyframes bgShift {
+    from { background-position: 0% 30%; }
+    to { background-position: 100% 70%; }
+  }
+
+  /* ── Vignette overlay ── */
+  #root::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(10, 5, 20, 0.18) 100%);
+    z-index: 99; pointer-events: none;
+  }
+
+  /* ── Camera push-in ── */
+  #root {
+    animation: pushIn 5s linear forwards;
+  }
+  @keyframes pushIn {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+  }
+
+  /* ── Floating blobs ── */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    mix-blend-mode: multiply;
+    filter: blur(120px);
+    will-change: transform;
+    z-index: 1;
+    opacity: 0.06;
+  }
+  .b1 {
+    width: 700px; height: 700px;
+    background: #7726B6;
+    top: -200px; left: -200px;
+    animation: float1 9s ease-in-out infinite;
+  }
+  .b2 {
+    width: 600px; height: 600px;
+    background: #9B4DE8;
+    top: 300px; right: -200px;
+    animation: float2 12s ease-in-out infinite;
+  }
+  .b3 {
+    width: 500px; height: 500px;
+    background: #F5BE2B;
+    bottom: 400px; left: -100px;
+    opacity: 0.03;
+    animation: float3 10s ease-in-out infinite;
+  }
+  .b4 {
+    width: 400px; height: 400px;
+    background: #7726B6;
+    bottom: 100px; right: -100px;
+    opacity: 0.05;
+    animation: float1 14s ease-in-out infinite reverse;
+  }
+  @keyframes float1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(60px, -80px) scale(1.1); }
+  }
+  @keyframes float2 {
+    0%, 100% { transform: translate(0, 0) scale(1.05); }
+    50% { transform: translate(-80px, 60px) scale(0.9); }
+  }
+  @keyframes float3 {
+    0%, 100% { transform: translate(0, 0) scale(0.95); }
+    50% { transform: translate(40px, 70px) scale(1.15); }
+  }
+
+  /* ── Subtle grid overlay ── */
+  .grid-overlay {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(155, 77, 232, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(155, 77, 232, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 2;
+  }
+
+  /* ── Top accent bar ── */
+  .accent-bar-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(to right, #F5BE2B, #7726B6, transparent);
+    z-index: 10;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: barIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+  }
+  @keyframes barIn { to { transform: scaleX(1); } }
+
+  /* ── Logo badge (top-left) ── */
+  .logo-badge {
+    position: absolute;
+    top: 56px; left: 56px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 10;
+    opacity: 0;
+    animation: fade 0.5s ease-out 0.1s forwards;
+  }
+  .logo-badge img {
+    width: 96px; height: 96px;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(119, 38, 182, 0.35);
+  }
+  .logo-badge .brand-name {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(26, 20, 48, 0.55);
+  }
+
+  /* ── Content layer — centered vertically ── */
+  .content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 80px;
+    z-index: 10;
+  }
+
+  /* kicker pill */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(245, 190, 43, 0.12);
+    border: 1px solid rgba(245, 190, 43, 0.4);
+    border-radius: 100px;
+    padding: 14px 36px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #F5BE2B;
+    opacity: 0;
+    animation: fadeUp 0.5s ease-out 0.2s forwards;
+    margin-bottom: 48px;
+  }
+  .kicker::before {
+    content: '';
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #F5BE2B;
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.03; }
+  }
+
+  /* headline — kinetic word-by-word */
+  .headline {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 900;
+    font-size: 112px;
+    line-height: 1.08;
+    margin-bottom: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 20px;
+  }
+  .headline .hw {
+    display: inline-block;
+    color: #7726B6;
+    opacity: 0;
+    transform: translateY(30px) scale(0.92);
+    animation: wordIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes wordIn {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* subheadline */
+  .subheadline {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.55;
+    color: rgba(26, 20, 48, 0.72);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s ease-out 0.7s forwards;
+    margin-bottom: 72px;
+    max-width: 860px;
+  }
+
+  /* CTA pill */
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: #F5BE2B;
+    color: #1a1440;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 900;
+    font-size: 32px;
+    padding: 26px 64px;
+    border-radius: 100px;
+    box-shadow: 0 10px 30px rgba(245, 190, 43, 0.4);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards;
+  }
+  .cta::after {
+    content: '→';
+    font-size: 34px;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade { to { opacity: 1; } }
+
+  /* ChuyenTin dark preview palette override */
+  html, body { background: #05020a; }
+  #root { background: #191127 !important; color: #FFFFFF !important; }
+  .bg-gradient { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; }
+  .blob { mix-blend-mode: screen; opacity: .14; }
+  .grid-overlay { background-image: linear-gradient(rgba(241,236,251,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,251,.07) 1px, transparent 1px); }
+  .logo-badge .brand-name, .subheadline { color: rgba(255,255,255,.78) !important; }
+  .headline .hw { color: #FFFFFF !important; }
+  .kicker { color: #F5BE2B !important; background: rgba(245,190,43,.12); }
+</style>
+</head>
+<body>
+  <div
+    id="root"
+    data-composition-id="main"
+    data-start="0"
+    data-duration="5"
+    data-width="1080"
+    data-height="1920"
+    data-composition-variables='{"kicker":"🔥 Tin nóng","headline":"Tiêu đề lớn","subheadline":"Dòng phụ mô tả ngắn gọn","cta":"Theo dõi ngay","brand":"ChuyenTin"}'
+  >
+    <div class="bg-gradient"></div>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    <div class="grid-overlay"></div>
+    <div class="accent-bar-top"></div>
+
+    <div class="logo-badge">
+      <img src="capture/assets/logo.webp" alt="ChuyenTin logo" />
+      <span class="brand-name" id="brand-name"></span>
+    </div>
+
+    <div class="content">
+      <div class="kicker"></div>
+      <div class="headline"></div>
+      <div class="subheadline"></div>
+      <div class="cta"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var v = (window.__hyperframes && typeof window.__hyperframes.getVariables === "function")
+        ? window.__hyperframes.getVariables() : {};
+      var set = function (sel, text) {
+        var el = document.querySelector(sel);
+        if (el && text != null) el.textContent = String(text);
+      };
+      set(".kicker", v.kicker);
+      set(".subheadline", v.subheadline);
+      set(".cta", v.cta);
+      set("#brand-name", v.brand);
+
+      // Kinetic headline — render word by word with stagger
+      var headEl = document.querySelector(".headline");
+      if (headEl && v.headline) {
+        headEl.innerHTML = '';
+        var words = String(v.headline).split(/\s+/);
+        words.forEach(function(w, i) {
+          var span = document.createElement('span');
+          span.className = 'hw';
+          span.textContent = w;
+          span.style.animationDelay = (0.4 + i * 0.1) + 's';
+          headEl.appendChild(span);
+        });
+      }
+
+      if (v.headline_color) {
+        var hwEls = document.querySelectorAll(".headline .hw");
+        hwEls.forEach(function(el) {
+          el.style.color = String(v.headline_color);
+        });
+      }
+    })();
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines["main"] = { pause: function(){}, seek: function(){}, paused: function(){ return true; } };
+  </script>
+</body>
+</html>

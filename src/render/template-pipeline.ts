@@ -1,10 +1,11 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import pLimit from "p-limit";
 import { TemplateScriptSchema, type TemplateScript } from "./template-script-schema.js";
-import { loadConfig } from "../config.js";
-import { createTtsClient } from "../tts/tts-client.js";
+import { loadConfig, type ConcreteTtsProvider, type TtsProvider } from "../config.js";
+import { createTtsClient, type TtsClient } from "../tts/tts-client.js";
 import {
   getDurationSec,
   concatWithSilence,
@@ -28,6 +29,44 @@ const TYPE_TO_SFX: Record<string, string> = {
   outro: "outro",
 };
 
+function resolveSceneTtsProvider(
+  runtimeProvider: TtsProvider,
+  script: TemplateScript,
+  scene: TemplateScript["scenes"][number],
+): ConcreteTtsProvider {
+  if (scene.ttsProvider) return scene.ttsProvider;
+  const defaultProvider = runtimeProvider === "mixed" ? script.voice.provider : runtimeProvider;
+  if (defaultProvider === "mixed") {
+    throw new Error(`Scene ${scene.id} must set ttsProvider when voice.provider is "mixed"`);
+  }
+  return defaultProvider;
+}
+
+function safeSlug(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 32) || "default";
+}
+
+function ttsCacheKey(args: {
+  provider: ConcreteTtsProvider;
+  text: string;
+  speed?: number;
+  instruct?: string;
+  voice?: string;
+}): string {
+  const hash = createHash("sha1")
+    .update(JSON.stringify(args))
+    .digest("hex")
+    .slice(0, 10);
+  const voicePart = args.provider === "vieneu" ? `-${safeSlug(args.voice ?? "default")}` : "";
+  return `${args.provider}${voicePart}-${hash}`;
+}
+
 export async function runTemplatePipeline(scriptPath: string): Promise<void> {
   const cfg = loadConfig();
   const outputDir = dirname(scriptPath);
@@ -44,22 +83,44 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
 
   // STEP 3 — TTS per scene (idempotent)
   log.step(3, TOTAL_STEPS, "TTS each scene");
-  const ttsClient = createTtsClient(cfg);
+  const ttsClients = new Map<ConcreteTtsProvider, TtsClient>();
+  const getTtsClient = (provider: ConcreteTtsProvider): TtsClient => {
+    const cached = ttsClients.get(provider);
+    if (cached) return cached;
+    const client = createTtsClient(cfg, provider);
+    ttsClients.set(provider, client);
+    return client;
+  };
   const limit = pLimit(cfg.ttsConcurrency);
   const voiceDir = join(outputDir, "voice");
   await mkdir(voiceDir, { recursive: true });
   const sceneAudio = await Promise.all(
     script.scenes.map((scene) =>
       limit(async () => {
-        const out = join(voiceDir, `scene-${scene.id}.mp3`);
-        const srtOut = join(voiceDir, `scene-${scene.id}.srt`);
+        const provider = resolveSceneTtsProvider(cfg.ttsProvider, script, scene);
+        const ttsClient = getTtsClient(provider);
+        const voice = cfg.vieneuVoice ?? script.voice.vieneuVoice;
+        const cacheKey = ttsCacheKey({
+          provider,
+          text: scene.voiceText,
+          speed: script.voice.speed,
+          instruct: script.voice.instruct,
+          voice: provider === "vieneu" ? voice : undefined,
+        });
+        const out = join(voiceDir, `scene-${scene.id}-${cacheKey}.mp3`);
+        const srtOut = join(voiceDir, `scene-${scene.id}-${cacheKey}.srt`);
         if (existsSync(out)) {
           const dur = await getDurationSec(out);
-          log.info(`  scene ${scene.id}: REUSE mp3 (${dur.toFixed(2)}s)`);
+          log.info(`  scene ${scene.id}: REUSE ${cacheKey} mp3 (${dur.toFixed(2)}s)`);
           return { id: scene.id, path: out, durationSec: dur };
         }
-        log.info(`  TTS scene ${scene.id} (${scene.voiceText.length} chars)...`);
-        await ttsClient.generate(scene.voiceText, out, srtOut);
+        const voiceLabel = provider === "vieneu" && voice ? ` / voice: ${voice}` : "";
+        log.info(`  TTS scene ${scene.id} with ${provider}${voiceLabel} (${scene.voiceText.length} chars)...`);
+        await ttsClient.generate(scene.voiceText, out, srtOut, {
+          speed: script.voice.speed,
+          instruct: script.voice.instruct,
+          voice,
+        });
         const dur = await getDurationSec(out);
         log.info(`  scene ${scene.id}: ${dur.toFixed(2)}s`);
         return { id: scene.id, path: out, durationSec: dur };
