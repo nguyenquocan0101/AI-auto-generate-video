@@ -1,14 +1,47 @@
 ---
 name: create-programming-video
-description: Tạo video dạy lập trình 9:16 dùng template HyperFrames ChuyenTin từ URL bài tutorial hoặc file .txt, có điều chỉnh nhịp độ/ngôn ngữ theo đối tượng (học sinh cấp 2, cấp 3, hoặc video chung). Trigger khi user muốn tạo video dạy lập trình, giải thích thuật toán, tutorial code, "tạo video lập trình", "làm video thuật toán", "video dạy code", "video giáo dục lập trình". Output: video.mp4 + voice.mp3 + script.txt cho CapCut.
+description: Tạo video dạy lập trình 9:16 dùng template HyperFrames ChuyenTin từ URL bài tutorial hoặc file .txt, có điều chỉnh nhịp độ/ngôn ngữ theo đối tượng (học sinh cấp 2, cấp 3, hoặc video chung) và theo độ dài mong muốn (short/standard/long). Trigger khi user muốn tạo video dạy lập trình, giải thích thuật toán, tutorial code, "tạo video lập trình", "làm video thuật toán", "video dạy code", "video giáo dục lập trình", "video ngắn về thuật toán", "video dài vài phút". Output: video.mp4 + voice.mp3 + script.txt cho CapCut.
 ---
 
-# V4 AUTHORITATIVE OVERRIDE - audience-adaptive pedagogy
+# V5 AUTHORITATIVE OVERRIDE - duration tier
 
-Áp dụng các quy tắc v4 dưới đây trước. Các phần v3 còn lại trong file này chỉ là nền kỹ thuật
-cho schema, template catalog, data_structure_type, algorithm_type và Python Tutor trace. Nếu có
-mâu thuẫn giữa v4 và v3, v4 thắng ở: `audience`, số scene, số scene TRACE, `voice.speed`, pacing,
-thứ tự scene, định nghĩa thuật ngữ, nhịp dự đoán và self-check.
+Áp dụng trước cả v4. `duration` chọn tier tổng thời lượng; v4 (audience) vẫn quyết định
+ngôn ngữ/nhịp độ giảng dạy bên trong tier đó. Nếu có mâu thuẫn giữa v5 và v4 về **số scene,
+số scene TRACE, danh sách scene bị cắt/thêm, `voice.speed`, tổng thời lượng**, v5 thắng.
+
+## Input v5
+
+Tham số:
+1. URL tutorial hoặc file `.txt`.
+2. `audience` tùy chọn: `"cap2" | "cap3" | "chung"` (xem v4).
+3. `duration` tùy chọn: `"short" | "standard" | "long"`. Mặc định `standard`.
+
+Nếu user nói rõ độ dài bằng số ("30 giây", "1 phút", "video ngắn", "clip dưới 1 phút") →
+`short`. Nếu nói "video dài", "vài phút", "giải thích kỹ", "chi tiết đầy đủ" → `long`.
+Nếu không nói gì → `standard` (dùng bảng v4 theo `audience`).
+
+## Bảng scene theo duration tier
+
+| | `short` | `standard` (bảng v4 theo audience) | `long` |
+|---|---|---|---|
+| Tổng số scene | 4-7 | 10-22 (xem v4) | 20-30 |
+| Số scene TRACE | 2-3 | 3-8 (xem v4) | 8-12 |
+| Scene bắt buộc | Hook, TRACE lõi, Outro | như v4 | Hook, Kiến thức nền, TRACE mở rộng (nhiều bước hơn + case biên), So sánh, Ứng dụng thực tế, Recap, Outro |
+| Scene bị cắt | Kiến thức nền, Các bước tổng quan, Recap, So sánh, Tối ưu hóa, Ứng dụng thực tế — chỉ giữ 1 định nghĩa ngắn trong voiceText của Hook/TRACE | không cắt gì ngoài quy tắc v4 | không cắt; thêm 1-2 scene ví dụ biến thể/case biên ngoài TRACE gốc nếu thuật toán cho phép |
+| `voice.speed` | 1.05 | theo bảng v4 (`audience`) | theo bảng v4 (`audience`), không vượt 0.85 |
+| Tổng thời lượng | 20-60 giây | 4-12 phút (theo `audience`) | 12-20 phút |
+
+Quy tắc `short`:
+- Không bao giờ cắt khối TRACE — đây là phần cốt lõi giúp hiểu thuật toán, kể cả video ngắn nhất.
+- Cấu trúc tối thiểu: `[Hook] → [TRACE 2-3 scene] → [Tổng kết 1 câu] → [Outro]`. Nếu thuật toán cần 1 câu khái niệm để TRACE không bị hụt ngữ cảnh, cho phép thêm đúng 1 scene `ct-build-minimal` ngay sau Hook.
+- TRACE chọn đúng 2-3 bước "đắt giá nhất" (bước đầu, bước có so sánh/thay đổi quan trọng, bước kết thúc) — không trace tuần tự từng dòng.
+- `voiceText` mỗi scene ngắn hơn mức thường (~10-18 từ) vì tổng thời lượng rất hẹp.
+
+Quy tắc `long`:
+- Giữ nguyên toàn bộ cấu trúc `standard` của audience tương ứng, KHÔNG cắt bớt.
+- Mở rộng TRACE lên 8-12 scene bằng cách trace đầy đủ hơn (ít gộp bước lặp giống hệt nhau hơn so với `standard`) và/hoặc thêm 1 input thứ hai (case biên: mảng đã sắp xếp sẵn, input rỗng, giá trị trùng lặp…) để trace thêm 2-4 scene.
+- Thêm scene "So sánh" và "Tối ưu hóa" nếu `optimization` có dữ liệu (bắt buộc ở tier này, không còn là tùy chọn).
+- Không tăng `voice.speed` so với bảng v4 của audience — video dài không có nghĩa là đọc nhanh hơn.
 
 ## Input v4
 
@@ -22,7 +55,7 @@ Nếu user không nói rõ:
 - Video kênh chung, không nhắm học sinh phổ thông: `chung`.
 - Nếu mơ hồ, hỏi đúng một câu: "Video này cho học sinh cấp 2, cấp 3, hay video chung?"
 
-## Scene count và pacing v4
+## Scene count và pacing v4 (áp dụng khi `duration = standard`)
 
 | | `chung` | `cap3` | `cap2` |
 |---|---|---|---|
@@ -54,7 +87,14 @@ Quy tắc:
 - Với `cap2`/`cap3`, thuật ngữ mới lần đầu xuất hiện phải được định nghĩa ngay trong cùng câu bằng một vế đời thường.
 - Với `cap2`/`cap3`, scene độ phức tạp phải kèm ví dụ số cụ thể, không chỉ đọc ký hiệu Big-O.
 
-## Self-check v4
+## Self-check v5 (duration, kiểm trước v4)
+
+- `duration = short`: tổng 4-7 scene, TRACE 2-3 scene, không có Kiến thức nền/Các bước tổng quan/Recap/So sánh/Tối ưu hóa/Ứng dụng thực tế, `voice.speed` 1.05, tổng thời lượng 20-60s.
+- `duration = long`: tổng 20-30 scene, TRACE 8-12 scene, có So sánh + Tối ưu hóa, `voice.speed` theo audience (không vượt 0.85), tổng thời lượng 12-20 phút.
+- `duration = standard` (mặc định): áp dụng nguyên self-check v4 bên dưới.
+- Sinh `metadata.duration` (`"short"|"standard"|"long"`) trong script.json.
+
+## Self-check v4 (áp dụng khi `duration = standard`)
 
 - Tổng scene: `chung` 10-16, `cap3` 12-20, `cap2` 16-22.
 - TRACE count: `chung` 3-5, `cap3` 4-6, `cap2` 6-8.
@@ -304,7 +344,9 @@ Renderer sẽ tự động animate riêng phần thay đổi này.
     "metadata": {
         "title": "<title>",
         "source": { "url": "<url hoặc local>", "domain": "<domain>", "image": null },
-        "channel": "ChuyenTin"
+        "channel": "ChuyenTin",
+        "audience": "<cap2|cap3|chung>",
+        "duration": "<short|standard|long>"
     },
     "voice": { "provider": "omnivoice", "speed": 1.0 },
     "scenes": [ ... ]
@@ -363,6 +405,7 @@ Tổng thời lượng: XX.Xs
 - Render mỗi scene ~10–15s. Video 10-16 scene ~2-4 phút — nếu cần short-form dưới 60s, chịu khó cắt [Kiến thức nền]/[Ứng dụng thực tế] trước, KHÔNG cắt khối TRACE (đây là phần cốt lõi giúp hiểu).
 - Nếu bài toán đệ quy phức tạp hoặc cây/đồ thị, sử dụng đúng `data_structure_type` tương ứng ("tree" hoặc "stack_queue") để được vẽ trực quan tối đa thay vì chỉ hiển thị text chay.
 - Nội dung tiếng Anh: dịch sang tiếng Việt cho voiceText, giữ tên hàm/biến gốc trong inputs.
+- Với `duration = standard | long`: đọc [engagement-polish.md](references/engagement-polish.md) trước Step 7 — thêm scene "Thử thách nhỏ" trước Outro và chỉnh CTA outro theo `audience`.
 
 
 
