@@ -133,6 +133,8 @@
     transform: translateY(50px);
     animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
     margin-bottom: 32px;
+    width: 100%;
+    white-space: nowrap;
   }
 
   /* horizontal rule */
@@ -245,6 +247,19 @@
       set(".anchor", v.anchor);
       set(".footer-left", v.footer_left);
       set(".footer-right", v.footer_right);
+
+      /* Auto-scale headline to fit container width */
+      var headline = document.querySelector(".headline");
+      if (headline && v.headline != null) {
+        var maxPx = 260, minPx = 80;
+        headline.style.whiteSpace = "nowrap";
+        headline.style.fontSize = maxPx + "px";
+        var avail = headline.parentElement ? headline.parentElement.clientWidth : 1560;
+        if (headline.scrollWidth > avail) {
+          var sized = Math.max(minPx, Math.floor(maxPx * avail / headline.scrollWidth));
+          headline.style.fontSize = sized + "px";
+        }
+      }
     })();
 
     window.__timelines = window.__timelines || {};

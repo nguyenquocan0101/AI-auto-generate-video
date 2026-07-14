@@ -54,6 +54,7 @@
                 font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 220px;
                 letter-spacing: -3px; color: #1a1440; line-height: 0.96; text-align: center;
                 text-shadow: 0 0 80px rgba(119, 38, 182, 0.55), 0 4px 30px rgba(0, 0, 0, 0.4);
+                width: 100%; white-space: nowrap;
             }
             .hero .ch {
                 display: inline-block; opacity: 0; transform: translateY(30px) scale(0.9);
@@ -158,7 +159,6 @@
                         var sized = Math.max(minPx, Math.floor(maxPx * hero.offsetWidth / hero.scrollWidth));
                         hero.style.fontSize = sized + "px";
                     }
-                    hero.style.whiteSpace = "";
                 }
             })();
             window.__timelines = window.__timelines || {};
