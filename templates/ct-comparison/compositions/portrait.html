@@ -82,7 +82,12 @@
   @keyframes fadeUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
 
-  .grad { color: inherit; }
+  .grad {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
   .stack { position: relative; z-index: 4; width: 100%; display: flex; flex-direction: column; align-items: center; }
 
   .badge { padding: 16px 36px; border-radius: 999px; font-size: 26px; font-weight: 700; letter-spacing: 5px;
@@ -158,7 +163,7 @@
       var RF = R.from || "#F5BE2B", RT = R.to || "#7726B6";
 
       var gradStyle = function (el, from, to) {
-        el.style.color = from;
+        el.style.backgroundImage = "linear-gradient(92deg, " + from + " 0%, " + to + " 100%)";
       };
       var setText = function (sel, text) {
         var el = document.querySelector(sel);

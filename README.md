@@ -245,7 +245,7 @@ npm run pipeline -- output/<slug>/script.json
             "id": "hook",
             "type": "hook",
             "voiceText": "Apple vừa ra mắt iPhone mười bảy với camera hai trăm megapixel.",
-            "templateId": "frame-liquid-bg-hero",
+            "templateId": "ct-hook-hero",
             "inputs": {
                 "kicker": "🔥 Tin nóng",
                 "headline": "iPhone 17",
@@ -258,7 +258,7 @@ npm run pipeline -- output/<slug>/script.json
             "id": "body-1",
             "type": "body",
             "voiceText": "Cảm biến mới thu nhiều ánh sáng hơn, ảnh đêm sắc nét hơn rõ rệt.",
-            "templateId": "frame-pentagram-stat",
+            "templateId": "ct-stat-card",
             "inputs": {
                 "label": "Camera",
                 "headline": "200MP",
@@ -270,7 +270,7 @@ npm run pipeline -- output/<slug>/script.json
             "id": "outro",
             "type": "outro",
             "voiceText": "Theo dõi AI Coding để xem bản tin công nghệ mới mỗi ngày.",
-            "templateId": "frame-logo-outro",
+            "templateId": "ct-outro",
             "inputs": {
                 "brand_name": "AI Coding",
                 "tagline": "Tin công nghệ mỗi ngày",
@@ -320,19 +320,20 @@ Every visual is a self-contained **HyperFrames** project under `templates/` — 
 and `compositions/portrait.html` (9:16). You fill the text `inputs`; the template owns the design.
 Full slot reference: [`templates/CATALOG.md`](templates/CATALOG.md).
 
-| Template                    | Role  | Best for                                                  |
-| --------------------------- | :---: | --------------------------------------------------------- |
-| `frame-liquid-bg-hero`      | hook  | Opening hook — aurora hero with headline + CTA pill       |
-| `frame-vignelli`            | body  | A single striking stat — dark charcoal + red accent       |
-| `frame-pentagram-stat`      | body  | A hero number / benchmark — dark neon + bar chart         |
-| `frame-bold-poster`         | body  | A punchy multi-line statement + giant figure              |
-| `frame-build-minimal`       | body  | One bold word revealed letter-by-letter — dark/amber      |
-| `frame-creative-voltage`    | body  | A creative slogan — electric-blue split + handwriting     |
-| `frame-glitch-title`        | body  | Breaking / tech news — cyberpunk RGB-split glitch         |
-| `frame-aicoding-list`       | body  | A **list** of 2–5 items (icon + level tag)                |
-| `frame-aicoding-comparison` | body  | A **head-to-head** comparison of two things               |
-| `frame-logo-outro`          | outro | Default brand end-card — logo glow + name + tagline + URL |
-| `frame-statement-outro`     | outro | Alternative outro — red statement card on paper           |
+| Template                | Role  | Best for                                                   |
+| ------------------------ | :---: | ----------------------------------------------------------- |
+| `ct-hook-hero`            | hook  | Opening hook — aurora hero with headline + CTA pill        |
+| `ct-stat-card`            | body  | A hero number / benchmark — dark neon + glowing stat        |
+| `ct-bold-poster`          | body  | A punchy multi-line statement + giant figure                |
+| `ct-build-minimal`        | body  | One bold word revealed letter-by-letter — dark/amber        |
+| `ct-voltage`              | body  | A creative slogan — electric split + handwriting             |
+| `ct-glitch-title`         | body  | Breaking / tech news / code header — cyberpunk RGB-split glitch |
+| `ct-list`                 | body  | A **list** of 2–5 items (icon + level tag)                  |
+| `ct-comparison`           | body  | A **head-to-head** comparison of two things                 |
+| `ct-code-trace`           | body  | Step-by-step code execution trace (array/list/tree/stack)   |
+| `ct-tree-cinema-trace`    | body  | Premium BST / tree traversal trace                          |
+| `ct-chuyentin-cinema`     | any   | Auto-detecting universal template (hook/list/stat/outro...) |
+| `ct-outro`                | outro | Brand end-card — logo glow + name + tagline + URL           |
 
 > **Add your own:** drop `templates/<id>/` with `index.html`, `compositions/portrait.html`,
 > `hyperframes.json`, `meta.json` (+ `NOTICE.md` if vendored), then add a row to `CATALOG.md`.

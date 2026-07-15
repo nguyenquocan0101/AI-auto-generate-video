@@ -204,7 +204,7 @@
     var zone = document.getElementById("tree-zone");
     var nodes = Array.isArray(v.tree_nodes) ? v.tree_nodes : [], visited = Array.isArray(v.visited_ids) ? v.visited_ids : [], current = v.current_id, map = {}, rootNode = null;
     nodes.forEach(function (n) { map[n.id] = { id:n.id, value:n.value, parent:n.parent, children:[] }; });
-    nodes.forEach(function (n) { if (!n.parent || !map[n.parent]) rootNode = map[n.id]; else map[n.parent].children.push(map[n.id]); });
+    nodes.forEach(function (n) { if (!n.parent || !map[n.parent]) { if (!rootNode) rootNode = map[n.id]; } else map[n.parent].children.push(map[n.id]); });
     function layout(node, x, y, spread) { node.x=x; node.y=y; if (node.children.length===1) layout(node.children[0], x, y+26, spread*.55); if (node.children.length>=2) { layout(node.children[0], x-spread, y+26, spread*.52); layout(node.children[1], x+spread, y+26, spread*.52); } }
     if (rootNode) layout(rootNode, 50, 18, 28);
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("class", "tree-svg"); zone.appendChild(svg);
@@ -246,7 +246,7 @@
   else if (v.title && v.subtitle) renderTitle();
   else if (Array.isArray(v.headline)) renderPoster();
   else renderHero();
-  var step = typeof v.step_index === "number" ? v.step_index : 1, total = typeof v.total_steps === "number" ? v.total_steps : 1;
+  var step = typeof v.step_index === "number" ? v.step_index : 1, total = typeof v.total_steps === "number" && v.total_steps > 0 ? v.total_steps : 1;
   document.getElementById("bar").style.width = Math.max(8, Math.min(100, step / total * 100)) + "%";
   window.__timelines = window.__timelines || {};
   window.__timelines.main = { pause: function(){}, seek: function(){}, paused: function(){ return true; } };

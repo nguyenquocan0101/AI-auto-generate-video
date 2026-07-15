@@ -178,7 +178,7 @@
       var badge = byId("badge");
       if (badge && v.badge) badge.textContent = String(v.badge);
       var step = typeof v.step_index === "number" ? v.step_index : 1;
-      var total = typeof v.total_steps === "number" ? v.total_steps : 1;
+      var total = typeof v.total_steps === "number" && v.total_steps > 0 ? v.total_steps : 1;
       byId("step-left").textContent = "STEP " + step;
       byId("step-right").textContent = step + " / " + total;
       byId("bar").style.width = Math.max(0, Math.min(100, step / total * 100)) + "%";
@@ -223,7 +223,7 @@
       var root = null;
       nodes.forEach(function (n) { map[n.id] = { id: n.id, value: n.value, parent: n.parent, children: [] }; });
       nodes.forEach(function (n) {
-        if (!n.parent || !map[n.parent]) root = map[n.id];
+        if (!n.parent || !map[n.parent]) { if (!root) root = map[n.id]; }
         else map[n.parent].children.push(map[n.id]);
       });
       function layout(node, x, y, spread) {

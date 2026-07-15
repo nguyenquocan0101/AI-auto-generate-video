@@ -99,7 +99,7 @@
 ▒░░▓ ░▒▓█
 ▓▒░░ █▓▒░</pre>
 
-    <div class="overline mono">— C++ Code Source —</div>
+    <div class="overline mono"></div>
     <div class="glitch-host">
       <h1 class="glitch-text base"></h1>
       <h1 class="glitch-text layer layer-p"></h1>
@@ -116,6 +116,10 @@
       
       var titleText = v.title != null ? String(v.title) : "";
       var subtitleText = v.subtitle != null ? String(v.subtitle) : "";
+      var overlineText = v.overline != null ? String(v.overline) : "— Code Source —";
+
+      var overlineEl = document.querySelector(".overline");
+      if (overlineEl) overlineEl.textContent = overlineText;
 
       var baseEl = document.querySelector(".glitch-text.base");
       var pEl = document.querySelector(".layer-p");

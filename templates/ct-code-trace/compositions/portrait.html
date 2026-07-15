@@ -20,7 +20,7 @@
   #root { background: #191127 !important; color: #FFFFFF !important; }
   .bg { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; }
   .grid { opacity: .2; background-image: linear-gradient(rgba(241,236,251,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,251,.07) 1px, transparent 1px) !important; }
-  .panel, .code-panel, .state-panel, .visual-panel, .data-panel, .variables-panel, .caption-panel, .controls-panel, .progress-panel { background: rgba(25,17,39,.52) !important; border-color: rgba(241,236,251,.14) !important; color: #FFFFFF !important; box-shadow: 0 18px 38px rgba(0,0,0,.20); }
+  .panel, .code-panel, .state-panel, .visual-panel, .data-panel, .variables-panel, .caption-panel, .progress-panel { background: rgba(25,17,39,.52) !important; border-color: rgba(241,236,251,.14) !important; color: #FFFFFF !important; box-shadow: 0 18px 38px rgba(0,0,0,.20); }
   .code-panel { background: rgba(18,12,28,.82) !important; border-color: rgba(241,236,251,.14) !important; }
   .code-row .cd { color: rgba(241,236,251,.95) !important; }
   .var-val, .var-name, .caption, .panel-title, .panel-label { color: rgba(255,255,255,.76) !important; }
@@ -31,8 +31,6 @@
   .var-row { background: rgba(255,255,255,.08) !important; border-color: rgba(241,236,251,.14) !important; color: #FFFFFF !important; }
   .var-row.changed { background: rgba(245,190,43,.14) !important; border-color: rgba(245,190,43,.42) !important; }
   .caption { background: rgba(25,17,39,.66) !important; border-color: rgba(241,236,251,.14) !important; color: rgba(255,255,255,.84) !important; }
-  .btn { background: rgba(255,255,255,.07) !important; border-color: rgba(241,236,251,.18) !important; color: rgba(255,255,255,.82) !important; }
-  .btn.primary { background: #F5BE2B !important; border-color: #F5BE2B !important; color: #191127 !important; }
   .progress { background: rgba(241,236,251,.14) !important; }
   .progress-bar { background: linear-gradient(90deg, #7726B6, #F5BE2B) !important; }
 </style>
@@ -382,24 +380,6 @@
     box-shadow: 0 12px 28px rgba(43, 115, 197, 0.12); min-height: 80px;
   }
 
-  /* 6. DEBUGGER CONTROLS (AESTHETIC) */
-  .controls-panel {
-    display: flex; gap: 20px; justify-content: center; margin-top: 10px;
-  }
-  .btn {
-    font-family: 'Be Vietnam Pro', sans-serif; font-size: 24px; padding: 14px 44px; border-radius: 999px;
-    border: 2.5px solid #2b73c5; background: #ffffff; color: #2b73c5; font-weight: 700;
-    transition: all 0.2s ease;
-    box-shadow: none;
-  }
-  .btn.primary {
-    background: #2b73c5;
-    color: #ffffff;
-    border-color: #2b73c5;
-    box-shadow: none;
-  }
-  .btn:disabled { opacity: 0.35; }
-
   /* Progress Bar */
   .progress-panel {
     width: 100%; margin-top: 10px;
@@ -412,7 +392,7 @@
   #root { background: #191127 !important; color: #FFFFFF !important; }
   .bg { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; }
   .grid { opacity: .2 !important; background-image: linear-gradient(rgba(241,236,251,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,251,.07) 1px, transparent 1px) !important; }
-  .panel, .code-panel, .state-panel, .visual-panel, .data-panel, .variables-panel, .caption-panel, .controls-panel, .progress-panel {
+  .panel, .code-panel, .state-panel, .visual-panel, .data-panel, .variables-panel, .caption-panel, .progress-panel {
     background: rgba(25,17,39,.56) !important;
     border-color: rgba(241,236,251,.16) !important;
     color: #F7F4FF !important;
@@ -422,7 +402,7 @@
     background: rgba(36,24,56,.70) !important;
     border-color: rgba(241,236,251,.20) !important;
   }
-  .caption-panel, .controls-panel, .progress-panel {
+  .caption-panel, .progress-panel {
     background: rgba(30,20,46,.58) !important;
   }
   .code-panel { background: rgba(18,12,28,.82) !important; border-color: rgba(241,236,251,.14) !important; }
@@ -459,12 +439,6 @@
     border-color: rgba(241,236,251,.12) !important;
     color: rgba(247,244,255,.84) !important;
   }
-  .btn {
-    background: rgba(255,255,255,.06) !important;
-    border-color: rgba(241,236,251,.18) !important;
-    color: #F7F4FF !important;
-  }
-  .btn.primary { background: #F5BE2B !important; border-color: #F5BE2B !important; color: #191127 !important; }
   .progress { background: rgba(241,236,251,.14) !important; }
   .progress-bar { background: linear-gradient(90deg, #7726B6, #F5BE2B) !important; }
 
@@ -537,25 +511,11 @@
 
       // Progress bar & button states
       var stepIndex = typeof v.step_index === "number" ? v.step_index : 0;
-      var totalSteps = typeof v.total_steps === "number" ? v.total_steps : 1;
+      var totalSteps = typeof v.total_steps === "number" && v.total_steps > 0 ? v.total_steps : 1;
       var progBar = document.getElementById("prog");
       if (progBar && totalSteps > 0) {
         var pct = (stepIndex / totalSteps) * 100;
         progBar.style.width = pct + "%";
-      }
-
-      var prevBtn = document.getElementById("btn-prev");
-      var nextBtn = document.getElementById("btn-next");
-      if (prevBtn) {
-        prevBtn.disabled = (stepIndex <= 1);
-      }
-      if (nextBtn) {
-        if (stepIndex >= totalSteps) {
-          nextBtn.textContent = "Xong ✓";
-          nextBtn.disabled = true;
-        } else {
-          nextBtn.textContent = "Tiếp →";
-        }
       }
 
       // 2. Render Code lines
@@ -778,7 +738,7 @@
             });
             treeNodes.forEach(function (n) {
               if (n.parent === null || !n.parent) {
-                rootNode = nodesMap[n.id];
+                if (!rootNode) rootNode = nodesMap[n.id];
               } else if (nodesMap[n.parent]) {
                 nodesMap[n.parent].children.push(nodesMap[n.id]);
               }

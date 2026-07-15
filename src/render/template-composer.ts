@@ -23,7 +23,7 @@ const ASPECT_ENTRY: Record<Aspect, string> = {
 };
 
 export interface ComposeArgs {
-    /** Folder name under templates/, e.g. "frame-bold-poster". */
+    /** Folder name under templates/, e.g. "ct-bold-poster". */
     templateId: string;
     /** Content slots, matching the template's data-composition-variables schema. */
     inputs: Record<string, unknown>;
@@ -47,11 +47,17 @@ export async function composeTemplate(args: ComposeArgs): Promise<string> {
         throw new Error(`Template not found: ${templateDir}/index.html`);
     }
 
-    // Pick the composition file for the requested aspect (fall back to index.html).
+    // Pick the composition file for the requested aspect. Templates only ship
+    // index.html (16:9) and compositions/portrait.html (9:16) today — no
+    // template has compositions/square.html, so silently falling back to
+    // index.html would render the wrong aspect with no warning.
     const entry = aspect ? ASPECT_ENTRY[aspect] : "index.html";
-    const entryFile = existsSync(join(templateDir, entry))
-        ? entry
-        : "index.html";
+    if (!existsSync(join(templateDir, entry))) {
+        throw new Error(
+            `Template ${templateId} has no composition for aspect ${aspect}: ${templateDir}/${entry} not found`,
+        );
+    }
+    const entryFile = entry;
 
     const outputPath = isAbsolute(args.outputPath)
         ? args.outputPath
@@ -122,13 +128,13 @@ if (
     };
     (async () => {
         await composeTemplate({
-            templateId: "frame-bold-poster",
+            templateId: "ct-bold-poster",
             inputs,
             aspect: "16:9",
             outputPath: "output/poc-bold-poster-16x9.mp4",
         });
         await composeTemplate({
-            templateId: "frame-bold-poster",
+            templateId: "ct-bold-poster",
             inputs,
             aspect: "9:16",
             outputPath: "output/poc-bold-poster-9x16.mp4",

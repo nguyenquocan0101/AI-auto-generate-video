@@ -250,7 +250,7 @@
     </div>
 
     <div class="content">
-      <div class="badge">Theo dõi ngay</div>
+      <div class="badge"></div>
       <div class="brand-name" data-text=""></div>
       <div class="tagline"></div>
     </div>
@@ -278,6 +278,7 @@
       }
       set(".tagline", v.tagline);
       set(".footer-url", v.primary_url);
+      set(".badge", v.cta != null ? v.cta : "Theo dõi ngay");
     })();
 
     window.__timelines = window.__timelines || {};

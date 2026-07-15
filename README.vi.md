@@ -244,7 +244,7 @@ npm run pipeline -- output/<slug>/script.json
             "id": "hook",
             "type": "hook",
             "voiceText": "Apple vừa ra mắt iPhone mười bảy với camera hai trăm megapixel.",
-            "templateId": "frame-liquid-bg-hero",
+            "templateId": "ct-hook-hero",
             "inputs": {
                 "kicker": "🔥 Tin nóng",
                 "headline": "iPhone 17",
@@ -257,7 +257,7 @@ npm run pipeline -- output/<slug>/script.json
             "id": "body-1",
             "type": "body",
             "voiceText": "Cảm biến mới thu nhiều ánh sáng hơn, ảnh đêm sắc nét hơn rõ rệt.",
-            "templateId": "frame-pentagram-stat",
+            "templateId": "ct-stat-card",
             "inputs": {
                 "label": "Camera",
                 "headline": "200MP",
@@ -269,7 +269,7 @@ npm run pipeline -- output/<slug>/script.json
             "id": "outro",
             "type": "outro",
             "voiceText": "Theo dõi AI Coding để xem bản tin công nghệ mới mỗi ngày.",
-            "templateId": "frame-logo-outro",
+            "templateId": "ct-outro",
             "inputs": {
                 "brand_name": "AI Coding",
                 "tagline": "Tin công nghệ mỗi ngày",
@@ -320,19 +320,20 @@ Mỗi template là một project **HyperFrames** riêng trong `templates/` — `
 `compositions/portrait.html` cho 9:16. Bạn chỉ việc điền `inputs`, phần nhìn cứ để template lo.
 Danh sách slot đầy đủ xem ở [`templates/CATALOG.md`](templates/CATALOG.md).
 
-| Template                    | Vai trò | Hợp với                                                |
-| --------------------------- | :-----: | ------------------------------------------------------ |
-| `frame-liquid-bg-hero`      |  hook   | Mở đầu — hero aurora với headline + nút CTA            |
-| `frame-vignelli`            |  body   | Một con số ấn tượng — nền than tối + accent đỏ         |
-| `frame-pentagram-stat`      |  body   | Một số/benchmark — nền tối neon + biểu đồ cột          |
-| `frame-bold-poster`         |  body   | Tuyên bố mạnh nhiều dòng + figure số lớn               |
-| `frame-build-minimal`       |  body   | Một từ lớn pop từng chữ — tối/cam                      |
-| `frame-creative-voltage`    |  body   | Khẩu hiệu sáng tạo — split xanh điện + chữ viết tay    |
-| `frame-glitch-title`        |  body   | Tin nóng / công nghệ — glitch RGB-split kiểu cyberpunk |
-| `frame-aicoding-list`       |  body   | **Danh sách** 2–5 mục (icon + tag mức độ)              |
-| `frame-aicoding-comparison` |  body   | **So sánh** hai thứ đối đầu                            |
-| `frame-logo-outro`          |  outro  | End-card mặc định — logo glow + tên + tagline + URL    |
-| `frame-statement-outro`     |  outro  | Outro thay thế — card đỏ trên nền giấy                 |
+| Template                 | Vai trò | Hợp với                                                     |
+| ------------------------- | :-----: | ------------------------------------------------------------ |
+| `ct-hook-hero`             |  hook   | Mở đầu — hero aurora với headline + nút CTA                 |
+| `ct-stat-card`             |  body   | Một số/benchmark — nền tối neon + số phát sáng               |
+| `ct-bold-poster`           |  body   | Tuyên bố mạnh nhiều dòng + figure số lớn                     |
+| `ct-build-minimal`         |  body   | Một từ lớn pop từng chữ — tối/cam                             |
+| `ct-voltage`               |  body   | Khẩu hiệu sáng tạo — split panel + chữ viết tay              |
+| `ct-glitch-title`          |  body   | Tin nóng / công nghệ / tiêu đề code — glitch RGB-split       |
+| `ct-list`                  |  body   | **Danh sách** 2–5 mục (icon + tag mức độ)                    |
+| `ct-comparison`            |  body   | **So sánh** hai thứ đối đầu                                  |
+| `ct-code-trace`            |  body   | Trace code từng bước (mảng/linked list/tree/stack-queue)     |
+| `ct-tree-cinema-trace`     |  body   | Trace BST/tree cao cấp, cinematic                             |
+| `ct-chuyentin-cinema`      |  any    | Template tự nhận diện layout (hook/list/stat/outro...)       |
+| `ct-outro`                 |  outro  | End-card thương hiệu — logo glow + tên + tagline + URL       |
 
 > **Thêm template của bạn:** tạo `templates/<id>/` với `index.html`, `compositions/portrait.html`,
 > `hyperframes.json`, `meta.json` (+ `NOTICE.md` nếu vendored), rồi thêm một dòng vào `CATALOG.md`.

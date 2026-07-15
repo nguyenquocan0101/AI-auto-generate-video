@@ -90,6 +90,12 @@
   .title .accent {
     color: #F5BE2B;
   }
+  .title .accent.has-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
   .subtitle {
     margin-top: 14px; font-size: 26px; font-weight: 500; color: rgba(26, 20, 48, 0.6);
     opacity: 0; animation: fadeDown 0.8s ease-out 0.4s both;
@@ -171,6 +177,7 @@
           s.className = "accent";
           s.textContent = accent;
           if (v.accent_from && v.accent_to) {
+            s.classList.add("has-gradient");
             s.style.backgroundImage =
               "linear-gradient(92deg, " + v.accent_from + " 0%, " + v.accent_to + " 100%)";
           }

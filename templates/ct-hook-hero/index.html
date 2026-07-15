@@ -313,12 +313,17 @@
         });
       }
 
-      if (v.headline_color) {
-        var hwEls = document.querySelectorAll(".headline .hw");
-        hwEls.forEach(function(el) {
-          el.style.color = String(v.headline_color);
-        });
-      }
+      // Gradient headline (documented slots: headline_from / headline_to).
+      var gradFrom = v.headline_from || "#F5BE2B";
+      var gradTo = v.headline_to || "#7726B6";
+      var hwEls = document.querySelectorAll(".headline .hw");
+      hwEls.forEach(function(el) {
+        el.style.setProperty("background-image", "linear-gradient(120deg, " + gradFrom + ", " + gradTo + ")");
+        el.style.setProperty("-webkit-background-clip", "text");
+        el.style.setProperty("background-clip", "text");
+        el.style.setProperty("color", "transparent", "important");
+        el.style.setProperty("-webkit-text-fill-color", "transparent", "important");
+      });
     })();
 
     window.__timelines = window.__timelines || {};

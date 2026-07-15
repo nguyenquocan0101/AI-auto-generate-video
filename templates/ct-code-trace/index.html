@@ -19,10 +19,10 @@
   #root { background: #191127 !important; color: #FFFFFF !important; }
   .bg { background: linear-gradient(145deg, #191127 0%, #1A0A2E 48%, #2A1045 100%) !important; }
   .grid { opacity: .2; background-image: linear-gradient(rgba(241,236,251,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,251,.07) 1px, transparent 1px) !important; }
-  .panel, .code-panel, .state-panel, .visual-panel, .data-panel, .variables-panel, .caption-panel, .controls-panel, .progress-panel { background: rgba(25,17,39,.50) !important; border-color: rgba(241,236,251,.13) !important; color: #F7F4FF !important; box-shadow: 0 16px 32px rgba(0,0,0,.18) !important; }
+  .panel, .code-panel, .state-panel, .visual-panel, .data-panel, .variables-panel, .caption-panel, .progress-panel { background: rgba(25,17,39,.50) !important; border-color: rgba(241,236,251,.13) !important; color: #F7F4FF !important; box-shadow: 0 16px 32px rgba(0,0,0,.18) !important; }
   .code-panel { background: rgba(18,12,28,.82) !important; border-color: rgba(241,236,251,.13) !important; }
   .variables-panel, .data-panel { background: rgba(36,24,56,.70) !important; border-color: rgba(241,236,251,.20) !important; }
-  .caption-panel, .controls-panel, .progress-panel { background: rgba(30,20,46,.58) !important; }
+  .caption-panel, .progress-panel { background: rgba(30,20,46,.58) !important; }
   .code-row .cd { color: rgba(241,236,251,.95) !important; }
   .var-val, .var-name, .caption, .panel-title, .panel-label { color: rgba(247,244,255,.76) !important; }
   .code-row { background: rgba(255,255,255,.02) !important; }
@@ -39,8 +39,6 @@
   .var-row { background: rgba(255,255,255,.06) !important; border-color: rgba(241,236,251,.16) !important; color: #F7F4FF !important; }
   .var-row.changed { background: rgba(245,190,43,.12) !important; border-color: rgba(245,190,43,.34) !important; }
   .caption { background: rgba(241,236,251,.07) !important; border-color: rgba(241,236,251,.12) !important; color: rgba(247,244,255,.84) !important; }
-  .btn { background: rgba(255,255,255,.06) !important; border-color: rgba(241,236,251,.18) !important; color: #F7F4FF !important; }
-  .btn.primary { background: #F5BE2B !important; border-color: #F5BE2B !important; color: #191127 !important; }
   .progress { background: rgba(241,236,251,.12) !important; }
   .progress-bar { background: linear-gradient(90deg, #7c5ef0, #F5BE2B) !important; }
 </style>
@@ -353,20 +351,6 @@
   .footer-row {
     display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 10px;
   }
-  .controls-panel { display: flex; gap: 16px; }
-  .btn {
-    font-family: 'Be Vietnam Pro', sans-serif; font-size: 20px; padding: 10px 36px; border-radius: 999px;
-    border: 2px solid #2b73c5; background: #ffffff; color: #2b73c5; font-weight: 700;
-    box-shadow: none;
-  }
-  .btn.primary {
-    background: #2b73c5;
-    color: #ffffff;
-    border-color: #2b73c5;
-    box-shadow: none;
-  }
-  .btn:disabled { opacity: 0.35; }
-
   .progress-panel { width: 400px; display: flex; flex-direction: column; gap: 8px; }
   .progress { height: 6px; background: rgba(237,232,248,.88); border-radius: 3px; overflow: hidden; }
   .progress-bar { height: 100%; background: linear-gradient(90deg, #7c5ef0, #F5BE2B); border-radius: 3px; transition: width 0.3s; }
@@ -470,25 +454,11 @@
 
       // Progress bar & button states
       var stepIndex = typeof v.step_index === "number" ? v.step_index : 0;
-      var totalSteps = typeof v.total_steps === "number" ? v.total_steps : 1;
+      var totalSteps = typeof v.total_steps === "number" && v.total_steps > 0 ? v.total_steps : 1;
       var progBar = document.getElementById("prog");
       if (progBar && totalSteps > 0) {
         var pct = (stepIndex / totalSteps) * 100;
         progBar.style.width = pct + "%";
-      }
-
-      var prevBtn = document.getElementById("btn-prev");
-      var nextBtn = document.getElementById("btn-next");
-      if (prevBtn) {
-        prevBtn.disabled = (stepIndex <= 1);
-      }
-      if (nextBtn) {
-        if (stepIndex >= totalSteps) {
-          nextBtn.textContent = "Xong ✓";
-          nextBtn.disabled = true;
-        } else {
-          nextBtn.textContent = "Tiếp →";
-        }
       }
 
       // 2. Render Code lines
@@ -711,7 +681,7 @@
             });
             treeNodes.forEach(function (n) {
               if (n.parent === null || !n.parent) {
-                rootNode = nodesMap[n.id];
+                if (!rootNode) rootNode = nodesMap[n.id];
               } else if (nodesMap[n.parent]) {
                 nodesMap[n.parent].children.push(nodesMap[n.id]);
               }
