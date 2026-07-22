@@ -113,6 +113,25 @@ Full control over every scene and template.
 
 A few minutes later → `output/<slug>/video.mp4` (1080×1920).
 
+### Local Studio
+
+Open the unified workspace for existing HyperFrames lessons and algorithm short clips:
+
+```bash
+npm run studio
+```
+
+Then visit `http://localhost:4173`. Studio can import a supported `script.json`, generate one from a topic/URL through a local or request-scoped BYOK provider, edit supported fields, and rerender only stale units. Existing projects are preserved; legacy media without `studio-job.json` is enrolled as `stale` instead of being assumed current.
+
+The original CLIs remain available as recovery paths:
+
+```bash
+npm run pipeline -- output/<project>/script.json
+npm run short-clip -- output/<project>/script.json
+```
+
+See [`studio/README.md`](studio/README.md) for sidecar states, invalidation rules, local generator configuration, credential handling, and restart recovery.
+
 ---
 
 ## 🎥 Live demo

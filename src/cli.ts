@@ -8,7 +8,7 @@ import { stdin as input, stdout as output } from "node:process";
 import { join } from "node:path";
 config({ path: ".env.local" });
 
-import { runTemplatePipeline } from "./render/template-pipeline.js";
+import { runTemplatePipeline, type PipelineMode } from "./render/template-pipeline.js";
 import { log } from "./utils/logger.js";
 
 type MenuChoice = {
@@ -225,10 +225,29 @@ async function interactiveScriptPath(): Promise<string> {
 }
 
 async function main() {
-  const scriptPath = process.argv[2] ?? await interactiveScriptPath();
+  const args = process.argv.slice(2);
+  const valueAfter = (flag: string) => {
+    const index = args.indexOf(flag);
+    return index >= 0 ? args[index + 1] : undefined;
+  };
+  const scriptArg = args.find((arg, index) => !arg.startsWith("--") && (index === 0 || !args[index - 1]?.startsWith("--")));
+  const scriptPath = scriptArg ?? await interactiveScriptPath();
+  const mode = (valueAfter("--mode") ?? "full") as PipelineMode;
+  if (!["full", "audio", "video", "scene", "compose"].includes(mode)) {
+    throw new Error(`Unknown pipeline mode: ${mode}`);
+  }
+  const sceneId = valueAfter("--scene");
+  const reportProgress = args.includes("--studio-progress");
   try {
     // Single pipeline: vendored HyperFrames templates (renderer "hyperframes").
-    await runTemplatePipeline(scriptPath);
+    await runTemplatePipeline(scriptPath, {
+      mode,
+      sceneId,
+      force: args.includes("--force"),
+      onProgress: reportProgress
+        ? (percent, message) => console.log(`@@STUDIO_PROGRESS@@${JSON.stringify({ percent, message })}`)
+        : undefined,
+    });
   } catch (e) {
     log.error("Pipeline failed", e);
     process.exit(1);

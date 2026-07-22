@@ -1,6 +1,6 @@
 ---
-description: Generate a short (~20-60s) programming/algorithm teaching clip from a tutorial URL or .txt file, using the create-programming-video skill's `duration=short` tier (Hook → 2-3 core TRACE scenes → Outro, no filler scenes). Output: video.mp4 + voice.mp3 + script.txt.
-argument-hint: <url|file.txt> [audience: cap2|cap3|chung]
+description: Alias của /short-clip — video thuật toán 9:16 dài 20-30 giây, không TTS, có cột chạy thật và beep.
+argument-hint: <url|file|nội dung về một thuật toán sắp xếp được hỗ trợ>
 ---
 
-Load the `create-programming-video` skill and run it with input `$ARGUMENTS`, forcing `duration = "short"` (per the skill's V5 duration-tier override). Keep `audience` as passed by the user, or let the skill infer it if omitted.
+Thực hiện đúng workflow của skill `short-clip` với `$ARGUMENTS`. Dùng agent `short-clip-script-writer` để tạo spec, ghi `script.json`, rồi chạy `npm run short-clip -- <script.json>`. Không gọi `create-programming-video` và không khởi động TTS.

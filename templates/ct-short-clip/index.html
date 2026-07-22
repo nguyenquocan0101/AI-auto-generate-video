@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920,height=1080" />
+<title>CT Short Clip · Landscape</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; margin: 0; overflow: hidden; background: #07090c; }
+  body { color: #f5f7f8; font-family: Arial, sans-serif; }
+  #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; padding: 58px 70px 48px; background: #090c10; }
+  .grid { position: absolute; inset: 0; opacity: .4; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 48px 48px; animation: drift 12s linear infinite; }
+  .content { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 1fr 1.05fr; grid-template-rows: auto minmax(0,1fr) auto; gap: 26px 34px; }
+  .hero { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 30px; }
+  .eyebrow { color: #8b5cf6; font: 700 18px/1.2 "Cascadia Code", Consolas, monospace; letter-spacing: .16em; text-transform: uppercase; }
+  h1 { margin: 10px 0 4px; font-size: 58px; line-height: 1; letter-spacing: -.045em; }
+  .subtitle { margin: 0; color: #aeb6bf; font: 21px/1.4 "Cascadia Code", Consolas, monospace; }
+  .metrics { display: flex; gap: 22px; padding: 16px 22px; border: 1px solid rgba(255,255,255,.09); border-radius: 11px; background: rgba(18,22,28,.8); }
+  .metric { color: #8e98a3; font: 700 18px/1 "Cascadia Code", Consolas, monospace; }.metric b { margin-left: 7px; color: #8b5cf6; }
+  .panel { min-height: 0; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 18px; background: rgba(11,14,18,.92); box-shadow: 0 24px 60px rgba(0,0,0,.32); animation: enter .7s cubic-bezier(.16,1,.3,1) both; }
+  .chart { position: relative; padding: 34px 30px 38px; }
+  .bars { height: 100%; display: flex; align-items: end; justify-content: center; gap: 12px; padding-top: 28px; }
+  .bar-wrap { height: 100%; min-width: 0; flex: 1; display: flex; align-items: end; justify-content: center; border-bottom: 2px solid rgba(255,255,255,.2); }
+  .bar { position: relative; width: 100%; max-width: 92px; min-height: 42px; border-radius: 6px 6px 2px 2px; background: #b7b8bc; transform-origin: bottom; animation: grow .58s cubic-bezier(.16,1,.3,1) both; }
+  .bar::after { content: attr(data-value); position: absolute; top: -28px; left: 50%; color: #dfe3e7; font: 700 17px/1 Consolas, monospace; transform: translateX(-50%); }
+  .bar.active { background: #ff343d; box-shadow: 0 0 26px rgba(255,52,61,.24); }.bar.sorted { background: #8cff00; box-shadow: 0 0 26px rgba(140,255,0,.24); }.bar.swap { animation: grow .58s cubic-bezier(.16,1,.3,1) both, pulse .8s .7s ease-in-out 2; }
+  .terminal { height: 54px; display: flex; align-items: center; gap: 11px; padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); }.terminal i { width: 13px; height: 13px; border-radius: 50%; background: #ff5f57; }.terminal i:nth-child(2){background:#ffbd2e}.terminal i:nth-child(3){background:#28c840}.terminal span{margin-left:auto;color:#727c87;font:700 15px/1 Consolas,monospace}
+  .code { height: calc(100% - 54px); padding: 24px 20px; overflow: hidden; font: 18px/1.46 "Cascadia Code", Consolas, monospace; }.line { display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:3px 10px;border-left:4px solid transparent;border-radius:5px;color:#b7b1ce}.line.active{border-left-color:#8cff00;color:#fff;background:rgba(139,92,246,.2)}.ln{color:#58616c;text-align:right}.code-text{white-space:pre}.kw{color:#d775ff}.num{color:#ffbd66}.fn{color:#64d8ff}
+  .footer { grid-column: 1 / -1; display:grid;grid-template-columns:1fr auto;gap:12px 24px;align-items:center}.status{color:#d8dde2;font:700 19px/1.2 Consolas,monospace}.step{color:#8e98a3;font:700 16px/1 Consolas,monospace}.progress{grid-column:1/-1;height:4px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.1)}.progress span{display:block;height:100%;background:linear-gradient(90deg,#8b5cf6,#8cff00)}
+  @keyframes drift { to { background-position:48px 48px } } @keyframes enter { from { opacity:0;transform:translateY(28px) } to { opacity:1;transform:none } } @keyframes grow { from { transform:scaleY(.04);opacity:.2 } to { transform:scaleY(1);opacity:1 } } @keyframes pulse { 50% { transform:translateY(-14px);filter:brightness(1.25) } }
+</style>
+</head>
+<body>
+<main id="root" data-composition-id="main" data-start="0" data-duration="6" data-width="1920" data-height="1080">
+  <div class="grid"></div>
+  <div class="content">
+    <header class="hero"><div><div class="eyebrow">Algorithm · Visual trace</div><h1 id="title">Bubble Sort</h1><p class="subtitle" id="subtitle"></p></div><div class="metrics"><span class="metric">Time:<b id="time"></b></span><span class="metric">Space:<b id="space"></b></span></div></header>
+    <section class="panel chart"><div class="bars" id="bars"></div></section>
+    <section class="panel"><div class="terminal"><i></i><i></i><i></i><span>algorithm.js</span></div><div class="code" id="code"></div></section>
+    <footer class="footer"><div class="status" id="status"></div><div class="step" id="step"></div><div class="progress"><span id="progress"></span></div></footer>
+  </div>
+</main>
+<script>
+(function(){
+  var sample={title:"Bubble Sort",subtitle:"Đổi chỗ hai phần tử kề nhau nếu sai thứ tự",time_complexity:"O(n²)",space_complexity:"O(1)",array_elements:[5,1,4,2,8],highlight_indices:[0,1],swap_indices:[0,1],sorted_indices:[4],code_lines:[{n:1,t:"function bubbleSort(a) {"},{n:2,t:"  for (let i = 0; i < a.length; i++) {"},{n:3,t:"    for (let j = 0; j < a.length-i-1; j++) {"},{n:4,t:"      if (a[j] > a[j + 1]) {"},{n:5,t:"        [a[j], a[j+1]] = [a[j+1], a[j]];"},{n:6,t:"      }"},{n:7,t:"    }"},{n:8,t:"  }"},{n:9,t:"}"}],active_line_num:4,status:"5 > 1 · hoán đổi",step_index:2,total_steps:6};
+  var injected=window.__hyperframes&&typeof window.__hyperframes.getVariables==="function"?window.__hyperframes.getVariables():{};var v=Object.assign({},sample,injected||{});
+  function text(id,value){var el=document.getElementById(id);if(el)el.textContent=String(value)}function esc(value){return String(value).replace(/[&<>]/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;"})[c]})}function syntax(value){return esc(value).replace(/\b(function|for|let|if|return)\b/g,'<span class="kw">$1</span>').replace(/\b(bubbleSort|swap)\b/g,'<span class="fn">$1</span>').replace(/\b(\d+)\b/g,'<span class="num">$1</span>')}
+  text("title",v.title);text("subtitle",v.subtitle);text("time",v.time_complexity);text("space",v.space_complexity);text("status",v.status);
+  var values=Array.isArray(v.array_elements)&&v.array_elements.length?v.array_elements:sample.array_elements;var max=Math.max.apply(null,values.map(function(n){return Math.abs(Number(n))||0}).concat([1]));var hi=Array.isArray(v.highlight_indices)?v.highlight_indices:[];var sw=Array.isArray(v.swap_indices)?v.swap_indices:[];var sorted=Array.isArray(v.sorted_indices)?v.sorted_indices:[];
+  document.getElementById("bars").innerHTML=values.map(function(value,index){var c=["bar"];if(hi.indexOf(index)>=0)c.push("active");if(sw.indexOf(index)>=0)c.push("swap");if(sorted.indexOf(index)>=0)c.push("sorted");return'<div class="bar-wrap"><div class="'+c.join(" ")+'" data-value="'+esc(value)+'" style="height:'+(45+Math.abs(Number(value))/max*430)+'px;animation-delay:'+(index*.05)+'s"></div></div>'}).join("");
+  var lines=Array.isArray(v.code_lines)?v.code_lines:[];document.getElementById("code").innerHTML=lines.map(function(row,index){var n=typeof row==="string"?index+1:row.n;var value=typeof row==="string"?row:row.t;return'<div class="line'+(n===v.active_line_num?' active':'')+'"><span class="ln">'+n+'</span><span class="code-text">'+syntax(value||"")+'</span></div>'}).join("");
+  var current=Math.max(1,Number(v.step_index)||1),total=Math.max(current,Number(v.total_steps)||1);text("step",String(current).padStart(2,"0")+" / "+String(total).padStart(2,"0"));document.getElementById("progress").style.width=Math.min(100,current/total*100)+"%";
+  window.__timelines=window.__timelines||{};window.__timelines.main={pause:function(){},seek:function(){},paused:function(){return true}};
+})();
+</script>
+</body>
+</html>

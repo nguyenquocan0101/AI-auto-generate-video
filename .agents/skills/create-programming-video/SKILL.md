@@ -1,6 +1,6 @@
 ---
 name: create-programming-video
-description: Tạo video dạy lập trình 9:16 dùng template HyperFrames ChuyenTin từ URL bài tutorial hoặc file .txt, có điều chỉnh nhịp độ/ngôn ngữ theo đối tượng học sinh cấp 2 hoặc cấp 3. Trigger khi user muốn tạo video dạy lập trình, giải thích thuật toán, tutorial code, "tạo video lập trình", "làm video thuật toán", "video dạy code", "video giáo dục lập trình", đặc biệt khi có nhắc tới học sinh, cấp 2, cấp 3, THCS, THPT. Output: video.mp4 + voice.mp3 + script.txt cho CapCut.
+description: "Tạo video dạy lập trình 9:16 dùng template HyperFrames ChuyenTin từ URL bài tutorial hoặc file .txt, có điều chỉnh nhịp độ/ngôn ngữ theo đối tượng học sinh cấp 2 hoặc cấp 3. Trigger khi user muốn tạo video dạy lập trình, giải thích thuật toán, tutorial code, \"tạo video lập trình\", \"làm video thuật toán\", \"video dạy code\", \"video giáo dục lập trình\", đặc biệt khi có nhắc tới học sinh, cấp 2, cấp 3, THCS, THPT. Output: video.mp4 + voice.mp3 + script.txt cho CapCut."
 ---
 
 # Create Programming Video Skill (v4 — chậm lại, dễ hiểu cho học sinh cấp 2/cấp 3)

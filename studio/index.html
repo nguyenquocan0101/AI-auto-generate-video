@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Coding · Video Pipeline</title>
+    <link rel="stylesheet" href="./styles/index.css?v=20260718-06" />
+  </head>
+  <body>
+    <a class="skip-link" href="#canvas">Đi tới pipeline</a>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#canvas" aria-label="AI Coding Video Pipeline">
+          <span class="brand-mark">&lt;/&gt;</span>
+          <span>AI Coding</span><i></i><span class="muted">Video pipeline</span>
+        </a>
+        <div class="project-switcher">
+          <label for="project-select">Dự án</label>
+          <select id="project-select" aria-label="Chọn project video"></select>
+          <button class="project-add" id="new-project" type="button">+ Project mới</button>
+        </div>
+        <div class="top-actions">
+          <span class="runtime"><b></b> Pipeline sẵn sàng</span>
+          <button class="primary" id="render-missing">Render mục cần làm <span id="missing-count">2</span></button>
+        </div>
+      </header>
+
+      <section class="workspace" id="canvas" aria-label="Pipeline dựng video">
+        <div class="workbench-layout">
+          <div class="workspace-actions">
+            <button class="quiet" id="jump-output">Đến kết quả cuối <span>↓</span></button>
+            <button class="quiet" id="compose-video">Ghép MP4 cuối <span>→</span></button>
+          </div>
+          <nav class="scene-navigator" aria-label="Đi tới scene">
+            <div class="scene-navigator-heading">
+              <span><b>Đi nhanh</b></span>
+              <small>Storyboard</small>
+              <button class="navigator-toggle" id="toggle-navigator" type="button" aria-expanded="true" aria-label="Thu gọn danh sách scene">‹</button>
+            </div>
+            <div class="scene-shortcuts" id="scene-shortcuts"></div>
+          </nav>
+          <div class="pipeline-scroll" id="canvas-viewport">
+            <div class="node-canvas" id="node-canvas">
+            <svg class="edge-layer" id="edge-layer" aria-hidden="true"></svg>
+            <article class="node source-node canvas-node" data-node-id="storyboard">
+              <div class="node-heading node-drag-handle" data-drag-node="storyboard"><span class="node-kicker">Nguồn</span><span aria-hidden="true">⠿</span></div>
+              <h2>Storyboard</h2>
+              <p class="storyboard-name" id="storyboard-name">Đang tải storyboard…</p>
+              <p class="storyboard-meta"><span id="storyboard-count">0 cảnh</span> · Nội dung và lời đọc có thể chỉnh sửa</p>
+              <button class="apply-script" id="edit-storyboard">Chỉnh storyboard</button>
+              <p class="editor-status" id="script-status" aria-live="polite">Đang tải storyboard hiện có…</p>
+              <button class="node-port output-port" data-port-out="storyboard" aria-label="Kéo để nối Storyboard với scene"></button>
+            </article>
+
+            <section class="scene-list" id="scene-list" aria-label="Danh sách scene"></section>
+
+            <aside class="node output-node canvas-node" id="output-node" data-node-id="output">
+              <div class="node-heading node-drag-handle" data-drag-node="output"><span class="node-kicker">Kết quả</span><span aria-hidden="true">⠿</span></div>
+              <h2>Tổng hợp</h2>
+              <div class="output-artifact">
+                <span>Video tổng</span><strong id="video-total">Đang chờ clip</strong><small>H.264 · 1080 × 1920</small>
+              </div>
+              <div class="output-artifact">
+                <span>Audio tổng</span><strong id="audio-total">Đang chờ audio</strong><small>AAC · 48 kHz · mono</small>
+              </div>
+              <div class="final-file" id="final-file">
+                <span>MP4 cuối</span><strong>Chưa ghép</strong>
+                <small>Render scene hoặc ghép lại</small>
+              </div>
+              <div class="final-preview">
+                <span>Preview MP4 cuối</span>
+                <video id="final-video" controls preload="metadata" playsinline aria-label="Preview video MP4 cuối"></video>
+                <p class="video-fallback">Chưa có MP4 cuối để xem.</p>
+              </div>
+              <div class="audio-preview final-audio-preview">
+                <span>Nghe audio tổng</span>
+                <audio id="final-voice" controls preload="metadata" aria-label="Nghe audio tổng"></audio>
+              </div>
+              <button class="node-port input-port" data-port-in="output" aria-label="Kéo dây vào đây để nối tới video tổng"></button>
+            </aside>
+            </div>
+            <div class="canvas-tools" aria-label="Điều khiển canvas">
+              <span class="canvas-zoom-label">Canvas</span>
+              <button id="zoom-out" type="button" aria-label="Thu nhỏ canvas">−</button>
+              <output id="zoom-level" class="zoom-level" aria-live="polite">100%</output>
+              <button id="zoom-in" type="button" aria-label="Phóng to canvas">+</button>
+              <button id="zoom-reset" type="button" aria-label="Đặt canvas về 100%">100%</button>
+              <button id="reset-layout">Sắp xếp node</button>
+              <button id="reset-connections">Nối lại theo thứ tự</button>
+            </div>
+          </div>
+        </div>
+        <section class="short-clip-workspace" id="short-clip-workspace" hidden aria-label="Short clip workspace">
+          <header class="short-clip-header">
+            <div>
+              <p class="node-kicker">CT SHORT CLIP</p>
+              <h1>Algorithm animation</h1>
+              <p>Một video · không voice · không bước compose trung gian.</p>
+            </div>
+            <div class="short-clip-summary" data-short-clip-summary></div>
+          </header>
+          <form class="short-clip-editor" data-short-clip-form>
+            <fieldset>
+              <legend>Cấu hình thuật toán</legend>
+              <label>Thuật toán<select data-short-clip-field="algorithm"></select></label>
+              <label>Tiêu đề<input data-short-clip-field="title" required /></label>
+              <label>Phụ đề<input data-short-clip-field="subtitle" required /></label>
+              <label>Nguồn<input data-short-clip-field="source" placeholder="Tuỳ chọn" /></label>
+              <label>Seed<input data-short-clip-field="seed" type="number" min="0" step="1" /></label>
+              <label>Thời lượng (giây)<input data-short-clip-field="duration_sec" type="number" min="20" max="60" step="1" placeholder="Tự động" /></label>
+            </fieldset>
+            <fieldset>
+              <legend>Dữ liệu trace</legend>
+              <label class="short-clip-wide">Giá trị ban đầu<textarea data-short-clip-field="initial_values" rows="3" placeholder="12, 8, 4, … (12–50 số)"></textarea></label>
+              <label class="short-clip-check"><input data-short-clip-field="sound.enabled" type="checkbox" /> Âm thanh so sánh/đổi chỗ</label>
+              <div class="short-clip-sound-grid">
+                <label>Compare Hz<input data-short-clip-field="sound.compare_hz" type="number" /></label>
+                <label>Compare ms<input data-short-clip-field="sound.compare_ms" type="number" /></label>
+                <label>Swap Hz<input data-short-clip-field="sound.swap_hz" type="number" /></label>
+                <label>Swap ms<input data-short-clip-field="sound.swap_ms" type="number" /></label>
+                <label>Gain<input data-short-clip-field="sound.gain" type="number" step="0.01" /></label>
+              </div>
+            </fieldset>
+            <div class="short-clip-actions">
+              <button class="primary" type="button" data-short-clip-render>Render short clip</button>
+              <p class="editor-status" data-short-clip-status aria-live="polite"></p>
+              <p class="short-clip-lock" data-short-clip-lock hidden>Đang render — tạm khoá chỉnh sửa.</p>
+            </div>
+          </form>
+          <div class="short-clip-preview">
+            <span>Preview video.mp4</span>
+            <video id="short-clip-video" controls preload="metadata" playsinline aria-label="Preview short clip"></video>
+          </div>
+        </section>
+
+      <footer class="canvas-footer">
+          <span>Kéo node để đổi vị trí · kéo cổng phải sang cổng trái để nối · chọn dây rồi nhấn Delete để xoá.</span>
+          <span id="activity" aria-live="polite">Sẵn sàng nhận lệnh</span>
+        </footer>
+      </section>
+    </main>
+    <dialog id="storyboard-dialog" aria-labelledby="storyboard-dialog-title">
+      <form method="dialog" class="storyboard-editor">
+        <header>
+          <div><p>Storyboard</p><h2 id="storyboard-dialog-title">Chỉnh nội dung bài học</h2></div>
+          <button type="button" class="dialog-close" id="close-editor" aria-label="Đóng cửa sổ chỉnh storyboard">×</button>
+        </header>
+        <label class="editor-title-label">Tên bài học<input id="editor-title" /></label>
+        <div id="editor-scenes" class="editor-scenes"></div>
+        <p class="editor-feedback" id="editor-feedback" aria-live="polite"></p>
+        <footer><button type="button" class="quiet dialog-cancel" id="close-editor-secondary">Giữ nguyên</button><button type="button" class="primary" id="save-storyboard">Áp dụng thay đổi</button></footer>
+      </form>
+    </dialog>
+    <dialog id="project-dialog" aria-labelledby="project-dialog-title">
+      <form method="dialog" class="project-editor" id="project-form">
+        <header>
+          <div><p>PROJECT</p><h2 id="project-dialog-title">Nạp hoặc tạo bài giảng</h2></div>
+          <button type="button" class="dialog-close" id="close-project" aria-label="Đóng cửa sổ project">×</button>
+        </header>
+        <div class="project-mode-tabs" role="tablist" aria-label="Cách tạo project">
+          <button type="button" class="active" data-project-mode="import">Import script.json</button>
+          <button type="button" data-project-mode="generate">AI Generate</button>
+        </div>
+        <label class="project-field">Tên project<input id="new-project-name" placeholder="selection-sort-lesson" autocomplete="off" /></label>
+        <section data-project-panel="import">
+          <label class="project-field">File script JSON<input id="script-file" type="file" accept=".json,application/json" /></label>
+        </section>
+        <section data-project-panel="generate" hidden>
+          <div class="project-generation-grid">
+            <label class="project-field">Nguồn<select id="generation-source-kind"><option value="topic">Chủ đề</option><option value="url">URL</option></select></label>
+            <label class="project-field">Renderer<select id="generation-renderer"><option value="hyperframes">Bài giảng HyperFrames</option><option value="ct-short-clip">Short clip thuật toán</option></select></label>
+            <label class="project-field project-field-wide">Nội dung<input id="generation-source-value" placeholder="Selection Sort cho học sinh cấp 2" /></label>
+            <label class="project-field">Provider<select id="generation-provider"><option value="local">Local process/skill</option><option value="openai">OpenAI</option><option value="claude">Claude</option><option value="gemini">Gemini</option></select></label>
+            <label class="project-field">Model<input id="generation-model" placeholder="Theo provider" autocomplete="off" /></label>
+            <label class="project-field project-field-wide" id="generation-key-field">API key<input id="generation-api-key" type="password" autocomplete="off" spellcheck="false" placeholder="Chỉ dùng cho request này, không lưu" /></label>
+          </div>
+          <p class="credential-notice">API key chỉ được gửi tới local Studio server cho lần generate hiện tại; không lưu vào project hoặc trình duyệt.</p>
+        </section>
+        <p class="editor-feedback" id="project-feedback" aria-live="polite"></p>
+        <footer><button type="button" class="quiet dialog-cancel" id="cancel-project">Huỷ</button><button type="submit" class="primary" id="submit-project">Tạo project</button></footer>
+      </form>
+    </dialog>
+    <script type="module" src="./app/main.js?v=20260718-07"></script>
+  </body>
+</html>

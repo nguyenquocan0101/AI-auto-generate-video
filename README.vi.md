@@ -113,6 +113,25 @@ Bạn tự kiểm soát từng scene, từng template.
 
 Vài phút sau → `output/<slug>/video.mp4` (1080×1920).
 
+### Studio local
+
+Mở workspace chung cho bài giảng HyperFrames và short clip thuật toán:
+
+```bash
+npm run studio
+```
+
+Sau đó truy cập `http://localhost:4173`. Studio có thể import `script.json`, sinh script từ topic/URL qua local hoặc provider BYOK theo từng request, chỉnh các field được hỗ trợ và chỉ render lại artifact đã `stale`. Project cũ được giữ nguyên; media legacy chưa có `studio-job.json` được đánh dấu `stale` thay vì mặc định coi là mới nhất.
+
+Hai CLI cũ vẫn là đường phục hồi độc lập:
+
+```bash
+npm run pipeline -- output/<project>/script.json
+npm run short-clip -- output/<project>/script.json
+```
+
+Xem [`studio/README.md`](studio/README.md) để biết trạng thái sidecar, quy tắc invalidation, cấu hình local generator, cách bảo vệ API key và khôi phục sau restart.
+
 ---
 
 ## 🎥 Live demo

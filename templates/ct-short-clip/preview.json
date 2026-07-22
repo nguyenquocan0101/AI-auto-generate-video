@@ -1,0 +1,31 @@
+{
+  "title": "Bubble Sort",
+  "subtitle": "Đổi chỗ hai phần tử kề nhau nếu sai thứ tự",
+  "time_complexity": "O(n²)",
+  "space_complexity": "O(1)",
+  "duration_sec": 8,
+  "initial_values": [54, 24, 72, 36, 18, 60, 42, 78, 30, 48, 66, 12],
+  "code_lines": [
+    { "n": 1, "t": "function bubbleSort(a) {" },
+    { "n": 2, "t": "  for (let i = 0; i < a.length; i++) {" },
+    { "n": 3, "t": "    for (let j = 0; j < a.length-i-1; j++) {" },
+    { "n": 4, "t": "      if (a[j] > a[j + 1]) {" },
+    { "n": 5, "t": "        [a[j], a[j+1]] = [a[j+1], a[j]];" },
+    { "n": 6, "t": "      }" },
+    { "n": 7, "t": "    }" },
+    { "n": 8, "t": "    // phần tử cuối đã đúng vị trí" },
+    { "n": 9, "t": "  }" },
+    { "n": 10, "t": "  return a;" },
+    { "n": 11, "t": "}" }
+  ],
+  "operations": [
+    { "time_ms": 900, "type": "compare", "indices": [0, 1], "values": [54, 24, 72, 36, 18, 60, 42, 78, 30, 48, 66, 12], "order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "active_line_num": 4, "sorted_indices": [], "status": "54 và 24 · so sánh" },
+    { "time_ms": 1500, "type": "swap", "indices": [0, 1], "values": [24, 54, 72, 36, 18, 60, 42, 78, 30, 48, 66, 12], "order": [1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "active_line_num": 5, "sorted_indices": [], "status": "54 > 24 · đổi chỗ" },
+    { "time_ms": 2400, "type": "compare", "indices": [2, 3], "values": [24, 54, 72, 36, 18, 60, 42, 78, 30, 48, 66, 12], "order": [1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "active_line_num": 4, "sorted_indices": [], "status": "72 và 36 · so sánh" },
+    { "time_ms": 3000, "type": "swap", "indices": [2, 3], "values": [24, 54, 36, 72, 18, 60, 42, 78, 30, 48, 66, 12], "order": [1, 0, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11], "active_line_num": 5, "sorted_indices": [], "status": "72 > 36 · đổi chỗ" },
+    { "time_ms": 3900, "type": "compare", "indices": [3, 4], "values": [24, 54, 36, 72, 18, 60, 42, 78, 30, 48, 66, 12], "order": [1, 0, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11], "active_line_num": 4, "sorted_indices": [], "status": "72 và 18 · so sánh" },
+    { "time_ms": 4500, "type": "swap", "indices": [3, 4], "values": [24, 54, 36, 18, 72, 60, 42, 78, 30, 48, 66, 12], "order": [1, 0, 3, 4, 2, 5, 6, 7, 8, 9, 10, 11], "active_line_num": 5, "sorted_indices": [], "status": "72 > 18 · đổi chỗ" },
+    { "time_ms": 5600, "type": "mark_sorted", "indices": [11], "values": [24, 54, 36, 18, 60, 42, 72, 30, 48, 66, 12, 78], "order": [1, 0, 3, 4, 5, 6, 2, 8, 9, 10, 11, 7], "active_line_num": 8, "sorted_indices": [11], "status": "Cố định vị trí 12" },
+    { "time_ms": 6500, "type": "done", "indices": [], "values": [12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78], "order": [11, 4, 1, 8, 3, 6, 9, 0, 5, 10, 2, 7], "active_line_num": 10, "sorted_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "status": "Hoàn tất · mảng đã tăng dần" }
+  ]
+}

@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, writeFileSync } from "node:fs";
+import { cp, mkdtemp, readFile, rm as rmAsync, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -33,6 +34,8 @@ export interface ComposeArgs {
     aspect?: Aspect;
     fps?: number;
     quality?: "draft" | "standard" | "high";
+    /** Override the static root data-duration for templates with a dynamic timeline. */
+    durationSec?: number;
 }
 
 /**
@@ -66,12 +69,42 @@ export async function composeTemplate(args: ComposeArgs): Promise<string> {
     );
     writeFileSync(varsFile, JSON.stringify(inputs), "utf8");
 
+    let renderTemplateDir = templateDir;
+    let temporaryTemplateDir: string | undefined;
+    if (args.durationSec !== undefined) {
+        if (!Number.isFinite(args.durationSec) || args.durationSec <= 0) {
+            throw new Error(`Invalid durationSec: ${args.durationSec}`);
+        }
+        temporaryTemplateDir = await mkdtemp(join(tmpdir(), "hf-template-"));
+        await cp(templateDir, temporaryTemplateDir, { recursive: true });
+        const temporaryEntry = join(temporaryTemplateDir, entry);
+        const html = await readFile(temporaryEntry, "utf8");
+        let patched = html.replace(
+            /data-duration="[^"]*"/,
+            `data-duration="${args.durationSec}"`,
+        );
+        const cssMatch = /<link\s+rel="stylesheet"\s+href="([^"]+)"\s*\/?\s*>/i.exec(patched);
+        if (cssMatch) {
+            const cssPath = join(dirname(temporaryEntry), cssMatch[1]);
+            const css = await readFile(cssPath, "utf8");
+            patched = patched.replace(cssMatch[0], `<style>${css}</style>`);
+        }
+        const scriptMatch = /<script\s+src="([^"]+)"\s*><\/script>/i.exec(patched);
+        if (scriptMatch) {
+            const scriptPath = join(dirname(temporaryEntry), scriptMatch[1]);
+            const script = await readFile(scriptPath, "utf8");
+            patched = patched.replace(scriptMatch[0], `<script>${script}</script>`);
+        }
+        await writeFile(temporaryEntry, patched, "utf8");
+        renderTemplateDir = temporaryTemplateDir;
+    }
+
     const spawnArgs = [
         // -y: never prompt to install. Pinned version → deterministic renders.
         "-y",
         "hyperframes@0.6.94",
         "render",
-        templateDir,
+        renderTemplateDir,
         "--composition",
         entryFile,
         "--output",
@@ -86,18 +119,24 @@ export async function composeTemplate(args: ComposeArgs): Promise<string> {
 
     log.info(`Compose ${templateId} (${entryFile}) → ${outputPath}`);
 
-    await new Promise<void>((resolve, reject) => {
-        const proc = spawn("npx", spawnArgs, {
-            stdio: ["ignore", "inherit", "inherit"],
-            shell: true,
+    try {
+        await new Promise<void>((resolve, reject) => {
+            const proc = spawn("npx", spawnArgs, {
+                stdio: ["ignore", "inherit", "inherit"],
+                shell: true,
+            });
+            proc.on("close", (code) =>
+                code === 0
+                    ? resolve()
+                    : reject(new Error(`hyperframes render failed (exit ${code})`)),
+            );
+            proc.on("error", reject);
         });
-        proc.on("close", (code) =>
-            code === 0
-                ? resolve()
-                : reject(new Error(`hyperframes render failed (exit ${code})`)),
-        );
-        proc.on("error", reject);
-    });
+    } finally {
+        if (temporaryTemplateDir) {
+            await rmAsync(temporaryTemplateDir, { recursive: true, force: true });
+        }
+    }
 
     log.info(`Rendered: ${outputPath}`);
     return outputPath;

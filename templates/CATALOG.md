@@ -459,6 +459,30 @@ This template auto-detects the scene layout from the provided slots:
 
 ---
 
+## ct-short-clip
+
+**Role:** short algorithm visualization with a bar chart and source code in one frame.
+Dark grid canvas, red compare bars, neon-green sorted bars, active code-line highlight, and compact time/space metrics.
+**Best for:** 15–60 second sorting, searching, two-pointer, sliding-window, and simple numeric-state clips.
+
+| slot | type | notes |
+| --- | --- | --- |
+| `title` | string | algorithm name |
+| `subtitle` | string | one-line explanation |
+| `time_complexity` | string | displayed time complexity |
+| `space_complexity` | string | displayed space complexity |
+| `array_elements` | number[] | current values rendered as bars |
+| `highlight_indices` | number[] | active comparison bars |
+| `swap_indices` | number[] | bars swapping in this scene |
+| `sorted_indices` | number[] | fixed/sorted bars rendered green |
+| `code_lines` | object[] | `{ n, t }` source-code lines |
+| `active_line_num` | number | highlighted source-code line |
+| `status` | string | current operation caption |
+| `step_index` | number | current visual step |
+| `total_steps` | number | total visual steps |
+
+---
+
 ## Adding a template
 
 Drop a folder `templates/<id>/` with `index.html` (16:9 root, `data-composition-id`),

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "create-lesson-from-source-or-script",
+    "title": "Create a lesson job from a topic, URL, or existing script",
+    "user_visible_behavior": "so that lesson creation can begin from generated content or previously prepared content",
+    "verification_command": "Studio offers both entry points, persists a valid lesson job under output/, and rejects malformed imports without writing partial project data.",
+    "status": "passing",
+    "evidence": "Generation/import integration tests pass; invalid requests and secrets create no partial project.",
+    "notes": "",
+    "priority": "P1"
+  },
+  {
+    "id": "inspect-durable-artifact-status",
+    "title": "Inspect render units and durable artifact status",
+    "user_visible_behavior": "so that the creator knows which artifact is missing, ready, failed, or stale",
+    "verification_command": "Every job exposes status for each render unit and final composition, and refresh preserves state derived from artifacts and source changes.",
+    "status": "passing",
+    "evidence": "Durable state, legacy stale adoption, failed artifact errors, and restart recovery tests pass.",
+    "notes": "",
+    "priority": "P1"
+  },
+  {
+    "id": "targeted-hyperframes-rerender",
+    "title": "Edit and rerender only affected HyperFrames artifacts",
+    "user_visible_behavior": "so that correcting one scene does not rerender unaffected scenes",
+    "verification_command": "Voice-only and visual-only edits invalidate only their dependency set, and rendering one scene leaves unrelated artifacts untouched.",
+    "status": "passing",
+    "evidence": "Targeted invalidation/render tests pass and unrelated scene file timestamp remains unchanged.",
+    "notes": "",
+    "priority": "P1"
+  },
+  {
+    "id": "short-clip-in-studio",
+    "title": "Open, configure, and render short clips in Studio",
+    "user_visible_behavior": "so that algorithm videos no longer require a separate command-line-only workflow",
+    "verification_command": "Studio lists a short-clip project, exposes supported fields, renders through the dedicated renderer, and displays its final MP4 as one render unit.",
+    "status": "passing",
+    "evidence": "12-element short clip creates one unit, renders ready, and records scoped failures.",
+    "notes": "",
+    "priority": "P1"
+  }
+]

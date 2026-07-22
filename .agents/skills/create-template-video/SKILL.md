@@ -1,6 +1,6 @@
 ---
 name: create-template-video
-description: Tạo video tin tức 9:16 bằng TEMPLATE HyperFrames chuyên nghiệp từ URL bài báo hoặc file .txt tiếng Việt. Trigger khi user muốn tạo video tin tức, làm short news, video kiểu template/poster đẹp, "tạo video template", "làm bản tin kiểu poster", "video tin tức chuyên nghiệp". Output: video.mp4 + voice.mp3 + script.txt cho CapCut.
+description: "Tạo video tin tức 9:16 bằng TEMPLATE HyperFrames chuyên nghiệp từ URL bài báo hoặc file .txt tiếng Việt. Trigger khi user muốn tạo video tin tức, làm short news, video kiểu template/poster đẹp, \"tạo video template\", \"làm bản tin kiểu poster\", \"video tin tức chuyên nghiệp\". Output: video.mp4 + voice.mp3 + script.txt cho CapCut."
 ---
 
 # Create Template Video Skill (Antigravity IDE)

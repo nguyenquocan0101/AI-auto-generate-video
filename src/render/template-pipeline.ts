@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
@@ -21,6 +21,15 @@ const TOTAL_STEPS = 8;
 const SCENE_GAP_SEC = 0.3;
 const OUTRO_HOLD_SEC = 3;
 const RENDER_FPS = 30;
+
+export type PipelineMode = "full" | "audio" | "video" | "scene" | "compose";
+
+export interface PipelineOptions {
+  mode?: PipelineMode;
+  sceneId?: string;
+  force?: boolean;
+  onProgress?: (percent: number, message: string) => void;
+}
 
 /** Maps a scene role to a key the SFX selector understands (tier-3 defaults). */
 const TYPE_TO_SFX: Record<string, string> = {
@@ -67,7 +76,9 @@ function ttsCacheKey(args: {
   return `${args.provider}${voicePart}-${hash}`;
 }
 
-export async function runTemplatePipeline(scriptPath: string): Promise<void> {
+export async function runTemplatePipeline(scriptPath: string, options: PipelineOptions = {}): Promise<void> {
+  const mode = options.mode ?? "full";
+  const progress = options.onProgress ?? (() => {});
   const cfg = loadConfig();
   const outputDir = dirname(scriptPath);
   log.info(`Output directory: ${outputDir}`);
@@ -76,6 +87,12 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
   log.step(1, TOTAL_STEPS, `Load + validate template script (TTS: ${cfg.ttsProvider})`);
   const raw = JSON.parse(await readFile(scriptPath, "utf8"));
   const script: TemplateScript = TemplateScriptSchema.parse(raw);
+  const targeted = mode === "audio" || mode === "video" || mode === "scene";
+  const targetScene = targeted ? script.scenes.find((scene) => scene.id === options.sceneId) : undefined;
+  if (targeted && !targetScene) {
+    throw new Error(`Scene not found for ${mode} render: ${options.sceneId ?? "(missing scene id)"}`);
+  }
+  progress(8, "Đã tải storyboard");
 
   // STEP 2 — script.txt for CapCut
   log.step(2, TOTAL_STEPS, "Write script.txt");
@@ -94,8 +111,9 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
   const limit = pLimit(cfg.ttsConcurrency);
   const voiceDir = join(outputDir, "voice");
   await mkdir(voiceDir, { recursive: true });
+  const audioScenes = targeted ? [targetScene!] : script.scenes;
   const sceneAudio = await Promise.all(
-    script.scenes.map((scene) =>
+    audioScenes.map((scene) =>
       limit(async () => {
         const provider = resolveSceneTtsProvider(cfg.ttsProvider, script, scene);
         const ttsClient = getTtsClient(provider);
@@ -109,6 +127,11 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
         });
         const out = join(voiceDir, `scene-${scene.id}-${cacheKey}.mp3`);
         const srtOut = join(voiceDir, `scene-${scene.id}-${cacheKey}.srt`);
+        const forceAudio = options.force && (mode === "audio" || mode === "scene") && scene.id === options.sceneId;
+        if (forceAudio) {
+          await rm(out, { force: true });
+          await rm(srtOut, { force: true });
+        }
         if (existsSync(out)) {
           const dur = await getDurationSec(out);
           log.info(`  scene ${scene.id}: REUSE ${cacheKey} mp3 (${dur.toFixed(2)}s)`);
@@ -127,12 +150,42 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
       }),
     ),
   );
+  progress(mode === "audio" ? 100 : 28, mode === "audio" ? "Audio scene đã sẵn sàng" : "Audio scene đã sẵn sàng");
+
+  if (mode === "audio") return;
+
+  if (mode === "video" || mode === "scene") {
+    const scene = targetScene!;
+    const durationSec = sceneAudio[0].durationSec;
+    const index = script.scenes.findIndex((item) => item.id === scene.id);
+    const visualDur = durationSec + (index < script.scenes.length - 1 ? SCENE_GAP_SEC : OUTRO_HOLD_SEC);
+    const clipsDir = join(outputDir, "clips");
+    await mkdir(clipsDir, { recursive: true });
+    const rawClip = join(clipsDir, `scene-${scene.id}.mp4`);
+    const fitClip = join(clipsDir, `scene-${scene.id}-fit.mp4`);
+    if (options.force) await rm(rawClip, { force: true });
+    progress(35, `Bắt đầu render video ${scene.id}`);
+    if (!existsSync(rawClip)) {
+      await composeTemplate({
+        templateId: scene.templateId,
+        inputs: scene.inputs,
+        aspect: script.aspect,
+        outputPath: rawClip,
+        fps: RENDER_FPS,
+      });
+    }
+    progress(88, `Đang khớp video với thời lượng audio ${scene.id}`);
+    await fitClipToDuration(rawClip, visualDur, fitClip, RENDER_FPS);
+    progress(100, `Video ${scene.id} đã sẵn sàng`);
+    return;
+  }
 
   // STEP 4 — concat voice + compute scene timings
   log.step(4, TOTAL_STEPS, "Concat voice + compute timings");
   const voiceRawMp3 = join(outputDir, "voice-raw.mp3");
   const voiceMp3 = join(outputDir, "voice.mp3");
   await concatWithSilence(sceneAudio.map((a) => a.path), SCENE_GAP_SEC, voiceRawMp3);
+  progress(40, "Đã ghép audio các scene");
 
   let cursor = 0;
   const sceneStarts: Record<string, number> = {};
@@ -168,6 +221,7 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
   await mixSfxOntoVoice(voiceRawMp3, sfxList, voiceMp3);
   const totalAudioSec = await getDurationSec(voiceMp3);
   log.info(`  voice.mp3: ${totalAudioSec.toFixed(2)}s, ${sfxList.length} SFX`);
+  progress(52, "Audio tổng đã sẵn sàng");
 
   // STEP 6 — render each scene's template clip, fit to its narration length
   log.step(6, TOTAL_STEPS, "Render template clips + fit to narration");
@@ -198,6 +252,7 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
     await fitClipToDuration(rawClip, visualDur, fitClip, RENDER_FPS);
     log.info(`  scene ${scene.id}: ${scene.templateId} → ${visualDur.toFixed(2)}s`);
     fittedClips.push(fitClip);
+    progress(52 + Math.round(((i + 1) / script.scenes.length) * 38), `Đã chuẩn bị scene ${i + 1}/${script.scenes.length}`);
   }
 
   // STEP 7 — concat clips + mux voice
@@ -205,7 +260,9 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
   const silentVideo = join(outputDir, "video-silent.mp4");
   const videoPath = join(outputDir, "video.mp4");
   await concatVideos(fittedClips, silentVideo);
+  progress(95, "Đã ghép video các scene");
   await muxAudioOntoVideo(silentVideo, voiceMp3, videoPath);
+  progress(100, "MP4 cuối đã sẵn sàng");
 
   // STEP 8 — done
   log.step(8, TOTAL_STEPS, "Done");

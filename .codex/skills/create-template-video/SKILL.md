@@ -38,23 +38,19 @@ Phát hiện input rồi lấy nội dung:
 **Chỉ dùng templateId có trong CATALOG.** Hiện có:
 
 **HOOK (chỉ 1):**
-- `frame-liquid-bg-hero` — hero aurora (blob động + headline + CTA). LUÔN dùng cho scene hook.
+- `ct-hook-hero` — hero aurora (blob động + headline gradient + CTA). LUÔN dùng cho scene hook.
 
 **BODY (Claude tự chọn theo nội dung — xem Step 5):**
-- `frame-vignelli` — 1 con số nền tối charcoal + đỏ.
-- `frame-pentagram-stat` — 1 con số nền tối neon (Swiss grid, số cam phát sáng + accent cyan + biểu đồ cột).
-- `frame-bold-poster` — tuyên bố mạnh nhiều dòng + figure số lớn.
-- `frame-build-minimal` — câu chốt mạnh nền tối (1 từ lớn IN ĐẬM, glow cam, reveal từng chữ).
-- `frame-creative-voltage` — câu sáng tạo/khẩu hiệu, split xanh điện + chữ viết tay.
-- `frame-glitch-title` — cyberpunk glitch RGB-split (nền nhiễu) — hợp tin sốc/breaking/công nghệ.
-- `frame-aicoding-list` — **DANH SÁCH** 2–5 mục (mỗi mục có icon + tag mức độ), nền tối gradient. Dùng khi scene là list/xếp hạng.
-- `frame-aicoding-comparison` — **SO SÁNH 2 thứ** (cũ vs mới, A vs B) — 2 card khung gradient + badge WIN + stat. Dùng khi scene đối đầu/đối chiếu.
+- `ct-stat-card` — 1 con số/benchmark nền tối neon (số vàng/cam phát sáng + eyebrow tím).
+- `ct-bold-poster` — tuyên bố mạnh nhiều dòng + figure số lớn.
+- `ct-build-minimal` — câu chốt mạnh nền tối (1 từ lớn IN ĐẬM, glow cam, reveal từng chữ).
+- `ct-voltage` — câu sáng tạo/khẩu hiệu, split panel + chữ viết tay.
+- `ct-glitch-title` — cyberpunk glitch RGB-split (nền nhiễu) — hợp tin sốc/breaking/công nghệ.
+- `ct-list` — **DANH SÁCH** 2–5 mục (mỗi mục có icon + tag mức độ), nền tối gradient. Dùng khi scene là list/xếp hạng.
+- `ct-comparison` — **SO SÁNH 2 thứ** (cũ vs mới, A vs B) — 2 card khung gradient + badge WIN + stat. Dùng khi scene đối đầu/đối chiếu.
 
-**OUTRO:**
-- `frame-logo-outro` — mặc định (logo glow + tên + tagline + url).
-- `frame-statement-outro` — thay thế (card đỏ nền giấy).
-- `frame-logo-outro` — **outro mặc định** / end-card thương hiệu (logo glow + tên + tagline + url).
-- `frame-statement-outro` — outro thay thế (card đỏ trên nền giấy).
+**OUTRO (chỉ 1):**
+- `ct-outro` — mặc định / end-card thương hiệu (logo glow + tên + tagline + url).
 
 ### Step 5: Sinh script.json (template mode)
 
@@ -79,28 +75,27 @@ Cấu trúc bắt buộc:
 
 - `provider`: luôn là `omnivoice` (TTS local duy nhất; không cần `voiceId`/API key).
 - Mỗi scene: `{ id, type, voiceText, templateId, inputs }`. `inputs` khớp slot trong CATALOG.
-- scenes[0].type = `hook`; scene cuối .type = `outro` (templateId = `frame-logo-outro`).
+- scenes[0].type = `hook`; scene cuối .type = `outro` (templateId = `ct-outro`).
 - **8–12 scene**; tổng voiceText ~270–360 từ (~90–120s) — **GIỮ NGUYÊN tổng thời lượng**, chỉ chia nhỏ ra NHIỀU scene hơn cho nhịp nhanh, đỡ nhàm. Mỗi body scene **~25–40 từ** (mỗi scene chỉ 1 ý duy nhất — nếu 1 đoạn có 2 ý thì TÁCH thành 2 scene thay vì nhồi vào 1). Mục tiêu: mỗi scene xuất hiện trên màn hình chỉ ~6–10s rồi chuyển cảnh.
 
 **Map nội dung → template:**
 
-- hook → **LUÔN `frame-liquid-bg-hero`** (slots: kicker, headline, subheadline, cta, brand). `headline` hiển thị bằng gradient bắt mắt (mặc định vàng→tím); có thể đặt `headline_from`/`headline_to` (2 màu hex) để đổi tông. Không dùng template khác cho hook.
+- hook → **LUÔN `ct-hook-hero`** (slots: kicker, headline, subheadline, cta, brand). `headline` hiển thị bằng gradient bắt mắt (mặc định vàng→tím); có thể đặt `headline_from`/`headline_to` (2 màu hex) để đổi tông. Không dùng template khác cho hook.
 - **body → Claude TỰ CHỌN template hợp nhất cho từng scene** theo nội dung (ưu tiên ĐA DẠNG — đừng lặp 1 template cho mọi body). Chọn trong:
-    - `frame-vignelli` — scene có **1 con số/stat** muốn nhấn mạnh, tông tối charcoal + đỏ. Slots: kicker, number, label, note, brand.
-    - `frame-pentagram-stat` — scene có **1 con số/benchmark**, nền tối neon (Swiss grid, số cam phát sáng + accent cyan) + biểu đồ cột. Slots: label, headline (số), subtitle, anchor, footer_left, footer_right.
-    - `frame-build-minimal` — **câu chốt/nhận định ngắn** xoay quanh 1 từ khoá, nền tối + 1 từ lớn in đậm glow cam. Slots: eyebrow, hero (1 từ), desc, side_left, side_right.
-    - `frame-bold-poster` — **tuyên bố mạnh nhiều dòng** + figure số lớn. Slots: kicker, date, figure, headline[], standfirst, footer_left, footer_right.
-    - `frame-creative-voltage` — **câu sáng tạo/khẩu hiệu** (vài từ), split xanh điện + viết tay. Slots: meta, display_lines, accent_index, script, caption.
-    - `frame-glitch-title` — **tin sốc/breaking/công nghệ** kiểu cyberpunk glitch. Slots: title, subtitle.
-    - `frame-aicoding-list` — **scene là DANH SÁCH / SO SÁNH 2–5 mục** (ai bị ảnh hưởng, ưu/nhược, các bậc, checklist). Slots: title, accent, accent_from, accent_to, subtitle, items[]. Mỗi item `{icon, title, desc, tag, level}`:
+    - `ct-stat-card` — scene có **1 con số/benchmark** muốn nhấn mạnh, nền tối neon (số vàng/cam phát sáng + eyebrow tím). Slots: label, headline (số), subtitle, anchor, footer_left, footer_right.
+    - `ct-build-minimal` — **câu chốt/nhận định ngắn** xoay quanh 1 từ khoá, nền tối + 1 từ lớn in đậm glow cam. Slots: eyebrow, hero (1 từ), desc, side_left, side_right.
+    - `ct-bold-poster` — **tuyên bố mạnh nhiều dòng** + figure số lớn. Slots: kicker, date, figure, headline[], standfirst, footer_left, footer_right.
+    - `ct-voltage` — **câu sáng tạo/khẩu hiệu** (vài từ), split panel + viết tay. Slots: meta, display_lines, accent_index, script, caption.
+    - `ct-glitch-title` — **tin sốc/breaking/công nghệ** kiểu cyberpunk glitch. Slots: title, subtitle.
+    - `ct-list` — **scene là DANH SÁCH / SO SÁNH 2–5 mục** (ai bị ảnh hưởng, ưu/nhược, các bậc, checklist). Slots: title, accent, accent_from, accent_to, subtitle, items[]. Mỗi item `{icon, title, desc, tag, level}`:
         - `icon`: Claude TỰ CHỌN emoji hợp từng mục (🚫 ⚠️ ✅ ❌ 📈 💡 🔒 🚀 …), KHÔNG cố định.
         - `level`: `danger`/`warn`/`good`/`info` → quyết định màu icon+tag+thanh. `tag`: nhãn ngắn (Nguy/Cao/Lợi…).
         - `accent_from`/`accent_to`: Claude TỰ CHỌN 2 màu hex cho gradient chữ nhấn (hợp tông bài), vd cam→đỏ, tím→lam, xanh lá.
-    - `frame-aicoding-comparison` — **scene SO SÁNH ĐÚNG 2 thứ** (cũ vs mới, A vs B, trước/sau). Slots: badge, pre, vs, post, left{}, right{}. Mỗi vế `{label, from, to, icon?, bullets[], stat?, stat_label?, win?}`:
+    - `ct-comparison` — **scene SO SÁNH ĐÚNG 2 thứ** (cũ vs mới, A vs B, trước/sau). Slots: badge, pre, vs, post, left{}, right{}. Mỗi vế `{label, from, to, icon?, bullets[], stat?, stat_label?, win?}`:
         - `from`/`to`: Claude TỰ CHỌN 2 màu hex gradient cho mỗi vế (thường 2 vế khác tông, vd trái cam→đỏ, phải teal→lam).
         - `icon`: emoji tuỳ chọn cho mỗi vế. `win: true` cho vế thắng (viền sáng + badge WIN). `stat`/`stat_label`: số liệu tuỳ chọn dưới mỗi card.
-    - Gợi ý cân bằng: nếu nhiều scene đều là số, xen kẽ `frame-vignelli` (than + đỏ/vàng) và `frame-pentagram-stat` (tối neon cam/cyan) cho đỡ đơn điệu; chèn `frame-build-minimal` cho scene không-số.
-- outro → `frame-logo-outro` (mặc định; slots: brand_name, tagline, primary_url). Dùng `frame-statement-outro` nếu muốn card đỏ nền giấy.
+    - Gợi ý cân bằng: nếu nhiều scene đều là số, dùng `ct-stat-card` xen kẽ với `ct-build-minimal` cho scene không-số, đỡ đơn điệu.
+- outro → **LUÔN `ct-outro`** (slots: brand_name, tagline, primary_url).
 
 ### ⚠️ Quy tắc TTS tiếng Việt (BẮT BUỘC cho `voiceText`)
 

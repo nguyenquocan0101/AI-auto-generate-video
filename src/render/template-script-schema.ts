@@ -53,11 +53,20 @@ export const TemplateScriptSchema = z.object({
   /** Output aspect for every scene (templates render a matching composition). */
   aspect: z.enum(["9:16", "16:9", "1:1"]).default("9:16"),
   scenes: z
-    .array(TemplateScene)
-    .min(3)
-    .max(24)
-    .refine((s) => s[0]?.type === "hook", { message: "scenes[0] must be type=hook" })
-    .refine((s) => s[s.length - 1]?.type === "outro", { message: "last scene must be type=outro" }),
+  .array(TemplateScene)
+  .min(3)
+  .max(24)
+  .refine((s) => s[0]?.type === "hook", { message: "scenes[0] must be type=hook" })
+  .refine((s) => s[s.length - 1]?.type === "outro", { message: "last scene must be type=outro" })
+  .superRefine((scenes, context) => {
+    const seen = new Set<string>();
+    for (const [index, scene] of scenes.entries()) {
+      if (seen.has(scene.id)) {
+        context.addIssue({ code: "custom", path: [index, "id"], message: "scene IDs must be unique" });
+      }
+      seen.add(scene.id);
+    }
+  }),
 });
 
 export type TemplateScript = z.infer<typeof TemplateScriptSchema>;
